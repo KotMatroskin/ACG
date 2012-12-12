@@ -1,3 +1,4 @@
+import java.sql.Savepoint;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,7 +10,7 @@ import java.util.Collections;
  * Time: 1:44 PM
  * To change this template use File | Settings | File Templates.
  */
-/*
+
 public abstract class Objective {
     private final String name; //name of the objectives
     private final int goal; //-1 - minimize, +1 - maximize, if constraint is set together with say min goal, then constraint is the upper bound, else it's a lower bound
@@ -18,6 +19,8 @@ public abstract class Objective {
     private ArrayList<Resource> res_list; //list of resources
     private int[] tight_border_var = null;
     private int[] loose_border_var = null;
+    private int[] max_var;
+    private int[] min_var;
 
     //if objective is max then the acceptable variants need to be above or equal to constraint,
     //if objective is min then constraint is the maximum acceptable value of objective
@@ -140,6 +143,18 @@ public abstract class Objective {
 
         }
         //at this point the resource list is ordered such that most influencial resource is on the top
+
+        //can also fill in max and min variant composition - just for easiness
+        //construct the rest of the variant
+        min_var = new int[res_list.size()];
+        max_var = new int[res_list.size()];
+        for (int i = 0; i < res_list.size(); i++) {
+            min_var[i] = res_list.get(i).getMin();
+        }
+
+        for (int i = 0; i < res_list.size(); i++) {
+            max_var[i] = res_list.get(i).getMax();
+        }
     }
 
     //divide each level and follow the max branch
@@ -161,23 +176,20 @@ public abstract class Objective {
         else {
 
             tight_border_var = new int[res_list.size()];
+            int [] last_acceptable_var = new int[res_list.size()]; //TODO - initialize with all -1 since it's until the end only partially filled
 
             if (goal > 0) { // MAXIMIZE
-                tight_border_var[0] = res_list.get(0).getMax();
-                //construct the rest of the variant
-                for (int i = 1; i < res_list.size(); i++) {
-                    tight_border_var[i] = res_list.get(i).getMin();
-                }
+                    tight_border_var = Arrays.copyOf(min_var, min_var.length);
+                    tight_border_var[0] = -1; //just to take care of the case when first level has two branches, therefore resulting in rounding down branch being executed and it shouldn't be on the first level. This is only necessary for this specific case and only has to do with rounding (which has to be corrected with rounding down when appropriate)
             } else { //MINIMIZE
-                tight_border_var[0] = res_list.get(0).getMin();
-                for (int i = 1; i < res_list.size(); i++) {
-                    tight_border_var[i] = res_list.get(i).getMax();
-                }
+                    tight_border_var = Arrays.copyOf(max_var,max_var.length);
+                    tight_border_var[0] = -1;//res_list.get(0).getMin();
             }
 
+            last_acceptable_var = Arrays.copyOf(tight_border_var, tight_border_var.length);
 
             for (int r = 0; r < res_list.size(); r++) {           //go through all levels of the tree of resources
-                System.out.println ("Level: " + (r+1));
+                System.out.println("Level: " + (r + 1));
 
                 //divide the current level
                 res = res_list.get(r);
@@ -191,141 +203,71 @@ public abstract class Objective {
 
                     border = tight_border_var[r];
                     tight_border_var[r] = (int) Math.ceil(min + (max - min) / 2.0);
-                    System.out.println ("Just computed regular tight_border it is: " +  tight_border_var[r]);
+                    System.out.println("Just computed regular tight_border it is: " + tight_border_var[r]);
 
                     if (tight_border_var[r] == border) { //account for always rounding up when computing the middle above
-
                         tight_border_var[r] -= 1;
-
                         System.out.println("ROUNDING DOWN");
                     }
-
+     
                     System.out.println("Calculation: " + tight_border_var[r] + " and border is right now " + border);
-
-
                     System.out.println("Looking at resource " + res.getName());
                     System.out.println(max);
                     System.out.println(min);
                     System.out.println("evaluating " + tight_border_var[r]);
 
                     value = evaluate(tight_border_var);
-
-
-                    //evaluate
+                  
                     if (value > constraint) {
-                        System.out.println("here");
+                        System.out.println(value + " > " + constraint);
 
-                        if (goal > 0) {       //maximize
-                            //but before we search the reverted to bush lets check if it's worth it
-                            //check the max variant on the bush that contains border to see if it is greater than constraints
-                            //because if it isn't we're done and there is no point in searching this bush for tighter match
-
-                            System.out.println("Checking if it is worth to continue searching");
-                            int[] tmp_variant = Arrays.copyOf(tight_border_var, tight_border_var.length);
-                            tmp_variant[r] = border;
-                            for (int k = r + 1; k < tmp_variant.length; k++) {
-                                tmp_variant[k] = res_list.get(k).getMax();
-
-                            }
-
-                            double tmp_value = evaluate(tmp_variant);
-                            if (tmp_value < constraint) {
-                                System.out.println("no");
-                                break;
-                            } else {
-                                tight_border_var[r] = border; //the other branch that was just tried gives smallest variant being larger than constraint, so we should revert to what has been tried previously
-                                max = tight_border_var[r]; //prune the bush who's smallest branch is larger than constraint
-
-                            }
-                            System.out.println("Set");
-
-                        } else { //minimizing
-
-                            //can prune everything to the right and keep tighting
-                            max = tight_border_var[r];
-                            System.out.println("minimize and my max is : " + max);
+                        if (goal > 0){
+                            //Save this point as last acceptable variant
+                            last_acceptable_var = Arrays.copyOf (tight_border_var, tight_border_var.length);
                         }
+                        max = tight_border_var[r];
+                        System.out.println("Now max is " + max + " and min is " + min);
+                        System.out.println("Border is now " + border + " and variant is " + Arrays.toString(tight_border_var));
 
                     } else if (value < constraint) {
-                        System.out.println("there");
-                        min = tight_border_var[r];
-                        System.out.println ("Just reset min to " + min);
-                        if (goal > 0) {
-                            min = tight_border_var[r];
-                            System.out.println("now min is " + min);
-                        } else {
-
-
-                            //check the next that bounds bushes from below/left if it satisfies the constraint
-                            //if it doesn't then we can stop and this is the tightest bound
-                            System.out.println("Checking if it is worth to continue searching (doing min)");
-                            int[] tmp_variant = Arrays.copyOf(tight_border_var, tight_border_var.length);
-                            //tmp_variant[r] = border;
-                            if (tmp_variant[r]+1 <= max)
-                                tmp_variant[r] +=1;//border;
-                            for (int k = r + 1; k < tmp_variant.length; k++) {
-                                tmp_variant[k] = res_list.get(k).getMin();
-                            }
-                            double tmp_value = evaluate(tmp_variant);
-                            if (tmp_value > constraint) {
-                                System.out.println("no");
-                                break;
-                            } else {
-                                System.out.println("yes");
-                                tight_border_var[r] = border; //the other branch that was just tried gives smallest variant being larger than constraint, so we should revert to what has been tried previously
-                                ////min = tight_border_var[r]; //prune the bush who's smallest branch is larger than constraint
-
-                            }
-
-
+                        System.out.println(value + " < " + constraint);
+                        if (goal  < 0 ){
+                            last_acceptable_var = Arrays.copyOf (tight_border_var, tight_border_var.length);;
                         }
-                    } else {
+
+                        min = tight_border_var[r];
+                        System.out.println("Just reset min to " + min);
+                        System.out.println("Now max is " + max + " and min is " + min);
+                        System.out.println("Border is now " + border + " and variant is " + Arrays.toString(tight_border_var));
+
+                    } else {   //being right on value of constraint is special in a sense that it should be
+                        //included whether objective is being maximized or minimized.
                         System.out.println("Right on constraint value");
                         if (r != res_list.size() - 1) {
-                            if (goal > 0) { //maximize
-                                System.out.println("Checking if it is worth to continue searching");
-                                int[] tmp_variant = Arrays.copyOf(tight_border_var, tight_border_var.length);
-                                tmp_variant[r] = border;
-                                for (int k = r + 1; k < tmp_variant.length; k++) {
-                                    tmp_variant[k] = res_list.get(k).getMax();
-                                }
-
-                                double tmp_value = evaluate(tmp_variant);
-                                if (tmp_value < constraint) {
-                                    System.out.println("no");
-                                    break;
-                                } else {
-                                    tight_border_var[r] = border; //the other branch that was just tried gives smallest variant being larger than constraint, so we should revert to what has been tried previously
-                                    max = tight_border_var[r]; //prune the bush who's smallest branch is larger than constraint
-
-                                }
-
-
-                                tight_border_var[r] = border;
-                                System.out.println("border is " + border);
-                            } else {
-                                min = tight_border_var[r];
+                            
+                            last_acceptable_var = Arrays.copyOf(tight_border_var, tight_border_var.length);
+                            if (goal > 0){
+                                max = tight_border_var[r];
                             }
+                            else
+                                min = tight_border_var[r];
+                            
                         } else //we're looking at the last resource, so there is no need to adjust max or min, or roll back to the value saved in border
                             //TODO can try searching for a tighter variant with the same value that uses lesser # of resources
                             //TODO that would be if goal is max check next (
-                            //break;
-                            //I will actually return, not just break here in order not to have the adjustemt by one happen
-                            //to this variant.
-                            return true;
+                            return true;  //since I'm returning don't have to worry about adjusting the variant
 
                     }
 
-
-                } while (max != min);// ((int) Math.ceil(min + (max - min) / 2.0) != tight_border_var[r]);
+                if (max - min == 1 && ((goal > 0 && border == max) || (goal < 0 && border == min))){                
+                    max = min;
+                }
+                } while (max != min);
 
 
             }
-            //adjustment
-            //if (goal > 0) //maximize
-            //  tight_border_var [tight_border_var.length-1] = tight_border_var [tight_border_var.length-1];
-
-            System.out.println("So at the end, the border variant is : " + evaluate(tight_border_var));
+            System.out.println("So at the end, the border variant is : " + evaluate(last_acceptable_var));
+            tight_border_var = last_acceptable_var;
             return true;
         }
 
@@ -352,7 +294,49 @@ public abstract class Objective {
         return output;
     }
 
+    //left_right is -: left or + to the right
+    private void increase_border_variant (int left_right){
 
+        //it doesn't make sense to increase\decrease a variant that falls onto max or min
+        //if ((goal > 0 && tight_border_var.equals(max_var)) || (goal < 0 && tight_border_var.equals(min_var))
+
+
+        if (left_right > 0){
+            System.out.println("Increasing");
+            for (int i = res_list.size()-1; i >=0; i--){
+               if ( tight_border_var[i] == res_list.get(i).getMax()){ //cannot increase
+                    //so set this one to smallest and increase next level
+                   tight_border_var[i] = res_list.get(i).getMin();
+               }
+               else {
+                   //increase and finish
+                   tight_border_var[i] +=1;
+                   break;
+               }
+            }
+        }
+        else {
+            System.out.println("Decreasing");
+            System.out.println(Arrays.toString(tight_border_var));
+            for (int i = res_list.size()-1; i >=0; i--){
+                if ( tight_border_var[i] == res_list.get(i).getMin()){ //cannot decrease
+                    System.out.println(tight_border_var[i]);
+                    //so set this one to largest and decrease next level
+                    tight_border_var[i] = res_list.get(i).getMax();
+                }
+                else {
+                    //increase and finish
+                    tight_border_var[i] -=1;
+                    System.out.println("here");
+                    break;
+                }
+            }
+
+            }
+
+    }
+    
+    
     //0 means that there is there is only 1 variant satisfying constraint so no point in engaging in further search
     //2 means that the whole tree satifies the constraint, also no point in searching
     private int check_constraint() {
@@ -415,4 +399,3 @@ public abstract class Objective {
 
     }
 }
-*/
