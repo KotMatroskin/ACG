@@ -2,18 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4d5c8532-8a51-49c0-8088-f9cd16a9fd59" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Area.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/MainDialog.form" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/MainDialog.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Objective.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Resource.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/ResourceCopies.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Test.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Test2.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Node.java" afterPath="$PROJECT_DIR$/src/Node.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Area.java" afterPath="$PROJECT_DIR$/src/Area.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Objective.java" afterPath="$PROJECT_DIR$/src/Objective.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Resource.java" afterPath="$PROJECT_DIR$/src/Resource.java" />
     </list>
     <ignored path="ACG.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -91,7 +83,7 @@
       <file leaf-file-name="Resource.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Resource.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="71" selection-start="1781" selection-end="1781" vertical-scroll-proportion="0.0">
+            <state line="75" column="32" selection-start="2301" selection-end="2318" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -109,7 +101,7 @@
       <file leaf-file-name="Objective.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Objective.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="209" column="43" selection-start="8690" selection-end="8690" vertical-scroll-proportion="-1.6538461">
+            <state line="387" column="20" selection-start="16162" selection-end="16162" vertical-scroll-proportion="0.60181">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -158,7 +150,7 @@
       <file leaf-file-name="Area.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Area.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="0" selection-start="1304" selection-end="1304" vertical-scroll-proportion="0.0">
+            <state line="28" column="58" selection-start="866" selection-end="866" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -196,14 +188,14 @@
         <option value="$PROJECT_DIR$/src/MainDialog.form" />
         <option value="$PROJECT_DIR$/src/MainDialog.java" />
         <option value="$PROJECT_DIR$/src/ResourceVerions.java" />
-        <option value="$PROJECT_DIR$/src/Area.java" />
         <option value="$PROJECT_DIR$/src/Node.java" />
         <option value="$PROJECT_DIR$/src/tmp.java" />
-        <option value="$PROJECT_DIR$/src/Resource.java" />
         <option value="$PROJECT_DIR$/src/ResourceCopies.java" />
         <option value="$PROJECT_DIR$/src/ResourceVersions.java" />
         <option value="$PROJECT_DIR$/src/Test2.java" />
         <option value="$PROJECT_DIR$/src/Test.java" />
+        <option value="$PROJECT_DIR$/src/Area.java" />
+        <option value="$PROJECT_DIR$/src/Resource.java" />
         <option value="$PROJECT_DIR$/src/Objective.java" />
       </list>
     </option>
@@ -502,7 +494,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1296" height="1010" extended-state="7" />
+    <frame x="-8" y="-8" width="1296" height="1010" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19953051" sideWeight="0.4667208" order="7" side_tool="false" content_ui="tabs" />
@@ -619,22 +611,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Area.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="0" selection-start="1304" selection-end="1304" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Resource.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="71" selection-start="1781" selection-end="1781" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/ResourceCopies.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="43" column="28" selection-start="1380" selection-end="1380" vertical-scroll-proportion="0.0">
@@ -663,9 +639,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Area.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="58" selection-start="866" selection-end="866" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Resource.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="75" column="32" selection-start="2301" selection-end="2318" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Objective.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="209" column="43" selection-start="8690" selection-end="8690" vertical-scroll-proportion="-1.6538461">
+        <state line="387" column="20" selection-start="16162" selection-end="16162" vertical-scroll-proportion="0.60181">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

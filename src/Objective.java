@@ -11,6 +11,8 @@ import java.util.Collections;
  * To change this template use File | Settings | File Templates.
  */
 
+//TODO replace function calls such as res_list.size() by variable reference
+
 public abstract class Objective {
     private final String name; //name of the objectives
     private final int goal; //-1 - minimize, +1 - maximize, if constraint is set together with say min goal, then constraint is the upper bound, else it's a lower bound
@@ -21,6 +23,13 @@ public abstract class Objective {
     private int[] loose_border_var = null;
     private int[] max_var;
     private int[] min_var;
+    
+    
+    //an array of pointers to arrays representing variants
+    private int[][] known_variants;
+    private double[] known_variants_values;
+    private int last =0;
+  
 
     //if objective is max then the acceptable variants need to be above or equal to constraint,
     //if objective is min then constraint is the maximum acceptable value of objective
@@ -65,11 +74,25 @@ public abstract class Objective {
     //sorts the list of resources based on K value
     public void sortResources() {
 
+
+        //now that resources should have added can *roughly* initialize the array to save values of
+        //variants for later retrieval
+        int number=1;
+        //count the number of all possible variants
+        for (int i = 0; i < res_list.size(); i++){
+            number = number*res_list.get(i).getMaxNumBranches();
+        }
+        number = (int)(Math.log(number/Math.log(2)))+1;
+        known_variants = new int[number][res_list.size()];
+        known_variants_values = new double[number];
+        System.out.println("---- " + number + "-----");
+        /*--------------------------------------------------------------*/
+
+
         double[] kValues = new double[res_list.size()]; //will hold k values for each of resource in the current order
 
         int[] extrem_variant = new int[res_list.size()];
         int[] critical_variant = new int[res_list.size()];
-        ///////extrem_variant[0] = (res_list.get(0)).getMax();
 
         for (int r = 0; r < res_list.size(); r++) {  //look at each resource to compute k-value
 
@@ -297,10 +320,6 @@ public abstract class Objective {
     //left_right is -: left or + to the right
     private void increase_border_variant (int left_right){
 
-        //it doesn't make sense to increase\decrease a variant that falls onto max or min
-        //if ((goal > 0 && tight_border_var.equals(max_var)) || (goal < 0 && tight_border_var.equals(min_var))
-
-
         if (left_right > 0){
             System.out.println("Increasing");
             for (int i = res_list.size()-1; i >=0; i--){
@@ -335,8 +354,67 @@ public abstract class Objective {
             }
 
     }
+
+    //TODO implement binary search instead
+    //assuming that the known_variants list is always kept sorted
+    //positive number i means that that the variant was found at position i
+    //negative number i means that the variant was not found but i would be the position where it would go into should it be inserted
+    public int findVariant (int[] variant){
+         if (last > 0) {
+             for (int i = 0; i < known_variants.length; i++){
+                 if (compare_variants(variant, known_variants[i]) < 0){ //reached the area of variant larger than current one
+                     return -i;    //now i is empty
+                 }
+                 if  (compare_variants(variant, known_variants[i]) == 0)
+                     return i;
+
+             }
+             
+         }
+        return 0;
+        
+    }
     
-    
+
+    // a safe copy of a parameter is made
+    //will insert at any valid position pos no additional checks are made to keep
+    //known_variants list sorted or non-sparse
+    public void insertVariant (int[] variant, double value, int pos){
+
+        //shift the variant up to free up the space at pos
+
+        //check that shifting can be done
+        if (last == known_variants.length-1 ){//grow the array first
+            Arrays.c
+        }
+        for (int j = last; j >= pos; j--){
+            known_variants[j+1] = known_variants[j];
+            known_variants_values[j+1] = known_variants_values[j];
+        }
+        known_variants[pos] = Arrays.copyOf(variant, variant.length);
+        known_variants_values[pos] = value;
+        //don't forget to update the last mark
+        last++;
+    }
+
+    public double getVariantValue (int pos){
+        System.out.println(">>>> retrieving");
+        return known_variants_values[pos];
+    }
+
+    //returns 1 if variant1 is *lexographically* (i.e. in the order of tree branches where left is less and right is more)
+    //larger and -1 if variant 2 is larger
+    //and 0 if variants are the same
+    public int compare_variants (int[] variant1, int[] variant2){
+
+        for (int i = 0; i < variant1.length; i++){
+            if (variant1[i] > variant2[i]) return 1;
+            else if (variant1[i] < variant2[i]) return -1;
+            //else keep checking
+        }
+        return 0;
+    }
+
     //0 means that there is there is only 1 variant satisfying constraint so no point in engaging in further search
     //2 means that the whole tree satifies the constraint, also no point in searching
     private int check_constraint() {

@@ -73,9 +73,9 @@ public abstract class Resource {
         return num;
     }
 
-    public int getMaxIndex (){
-        if (not_included) return num;
-        else return num-1;
+    public int getMaxNumBranches (){
+        if (not_included) return num+1;
+        else return num;
     }
     
     int find(String objctv) {

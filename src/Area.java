@@ -24,28 +24,36 @@ public class Area extends Objective {
     //presently stored in the list of resources
     public double evaluate(int[] variant) {
 
+        //first check if this variant hasn't been evaluated already
+        int pos = findVariant(variant);
+        if (pos < 0) { //variant already has been computed before and value filed
+             return getVariantValue(pos);
+        } else  { //computer the value of variant and insert it
 
-        System.out.println("Evalute variant: " + Arrays.toString(variant));
 
-        ArrayList<Resource> resources = super.getResourceList();
+            System.out.println("Evalute variant: " + Arrays.toString(variant));
 
-        if (resources.size() != variant.length) {
-            throw (new Error("the variant of resources must have the same length as number of *types* of resources available"));
-        }
+            ArrayList<Resource> resources = super.getResourceList();
 
-        Double area = 0.0;
-
-        for (int i = 0; i < resources.size(); i++) {
-
-            //System.out.println(variant[0] + "-----");
-            if (variant[i] != 0) {
-
-                //System.out.println(super.getName() + " varinat " + Arrays.toString(variant));
-                area += resources.get(i).getValue(super.getName(), variant[i]);
+            if (resources.size() != variant.length) {
+                throw (new Error("the variant of resources must have the same length as number of *types* of resources available"));
             }
 
+            Double area = 0.0;
+
+            for (int i = 0; i < resources.size(); i++) {
+
+                //System.out.println(variant[0] + "-----");
+                if (variant[i] != 0) {
+
+                    //System.out.println(super.getName() + " varinat " + Arrays.toString(variant));
+                    area += resources.get(i).getValue(super.getName(), variant[i]);
+                }
+
+            }
+            System.out.println("Area for this variant is: " + area);
+            insertVariant(variant, area, pos);
+            return area;
         }
-        System.out.println("Area for this variant is: " + area);
-        return area;
     }
 }
