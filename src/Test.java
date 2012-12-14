@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -14,6 +15,8 @@ public class Test {
         Objective[] objectives = new Objective[1];
         objectives[0] = new Area("bla", "max",70);
         String[] obj = {"area"};
+        ArrayList<Resource> res_list = new ArrayList<Resource>();
+
         //test resources
         ResourceVersions adder = new ResourceVersions("adder",7 , obj, false);
         adder.setObjectiveValues(obj[0], new double[]{1.0,3.0,6.0, 7.0, 8.0,13.0, 14.0});
@@ -25,10 +28,13 @@ public class Test {
         ResourceVersions accum = new ResourceVersions("accum", 4, obj, false);
         accum.setObjectiveValues(obj[0], new double[] {20,80.0,90,100});
 
-        objectives[0].addResource(adder);
-        objectives[0].addResource(mult);
-        objectives[0].addResource(div);
-        objectives[0].addResource(accum);
+
+
+        res_list.add(adder);
+        res_list.add(mult);
+        res_list.add(div);
+        res_list.add(accum);
+        objectives[0].setResourceList(res_list);
 
         System.out.println(objectives[0].toString());
 

@@ -11,33 +11,32 @@ import java.util.Collections;
  * To change this template use File | Settings | File Templates.
  */
 
-//TODO replace function calls such as res_list.size() by variable reference
+//TODO replace function calls such as res_list.size() by variable reference ??
 
+    //constraint and goal can change, however, the changing list of resources will result in the need to recompute everything
+    //for example, changing goal from max to min will merely result in switching around of tight and loose border variants
+    //changing constraint also just refines the search i.e. we already know something about the tree, no need to do as much work
 public abstract class Objective {
     private final String name; //name of the objectives
     private final int goal; //-1 - minimize, +1 - maximize, if constraint is set together with say min goal, then constraint is the upper bound, else it's a lower bound
     private double constraint = 0;     //should be in the same units as what objective computes, it's inclusive
     private String units;
-    private ArrayList<Resource> res_list; //list of resources
+    private final ArrayList<Resource> res_list; //list of resources
     private int[] tight_border_var = null;
     private int[] loose_border_var = null;
     private int[] max_var;
     private int[] min_var;
     
-    
-    //an array of pointers to arrays representing variants
-    private int[][] known_variants;
-    private double[] known_variants_values;
-    private int last =0;
-  
+    protected VariantRepository rep;
 
     //if objective is max then the acceptable variants need to be above or equal to constraint,
     //if objective is min then constraint is the maximum acceptable value of objective
 
-    public Objective(String name, String units, String goal) {
-        res_list = new ArrayList<Resource>();
+    public Objective(String name, String units, String goal, ArrayList<Resource> res_list, VariantRepository rep) {
+        this.res_list = res_list;
         this.name = name;
         this.units = units;
+        this.rep = rep;
         if (goal.equalsIgnoreCase("max"))
             this.goal = 1;
         else if (goal.equalsIgnoreCase("min"))
@@ -49,45 +48,31 @@ public abstract class Objective {
 
     }
 
-    public Objective(String name, String units, String goal, double constraint) {
-        this(name, units, goal);
+    public Objective(String name, String units, String goal,  double constraint, ArrayList<Resource> res_list, VariantRepository rep) {
+        this(name, units, goal, res_list, rep);
         this.constraint = constraint;
     }
 
-
+    //TODO return a safe copy?
     public ArrayList<Resource> getResourceList() {
         return res_list;
     }
 
+    public void setConstraint (double constraint){
+        this.constraint = constraint;
+    }
+    
     public String getName() {
         return name;
     }
 
-    public void addResource(Resource r) {
-        res_list.add(r);
-    }
-
+    //TODO return a safe copy?
     public int[] getTight_border_var() {
         return tight_border_var;
     }
 
     //sorts the list of resources based on K value
     public void sortResources() {
-
-
-        //now that resources should have added can *roughly* initialize the array to save values of
-        //variants for later retrieval
-        int number=1;
-        //count the number of all possible variants
-        for (int i = 0; i < res_list.size(); i++){
-            number = number*res_list.get(i).getMaxNumBranches();
-        }
-        number = (int)(Math.log(number/Math.log(2)))+1;
-        known_variants = new int[number][res_list.size()];
-        known_variants_values = new double[number];
-        System.out.println("---- " + number + "-----");
-        /*--------------------------------------------------------------*/
-
 
         double[] kValues = new double[res_list.size()]; //will hold k values for each of resource in the current order
 
@@ -299,6 +284,9 @@ public abstract class Objective {
 
     public abstract double evaluate(int[] variant);
 
+
+    public abstract void createMask (ArrayList<Resource> list);
+
     public String toString() {
 
         String output = "Objective name: " + name + "\n";
@@ -355,65 +343,6 @@ public abstract class Objective {
 
     }
 
-    //TODO implement binary search instead
-    //assuming that the known_variants list is always kept sorted
-    //positive number i means that that the variant was found at position i
-    //negative number i means that the variant was not found but i would be the position where it would go into should it be inserted
-    public int findVariant (int[] variant){
-         if (last > 0) {
-             for (int i = 0; i < known_variants.length; i++){
-                 if (compare_variants(variant, known_variants[i]) < 0){ //reached the area of variant larger than current one
-                     return -i;    //now i is empty
-                 }
-                 if  (compare_variants(variant, known_variants[i]) == 0)
-                     return i;
-
-             }
-             
-         }
-        return 0;
-        
-    }
-    
-
-    // a safe copy of a parameter is made
-    //will insert at any valid position pos no additional checks are made to keep
-    //known_variants list sorted or non-sparse
-    public void insertVariant (int[] variant, double value, int pos){
-
-        //shift the variant up to free up the space at pos
-
-        //check that shifting can be done
-        if (last == known_variants.length-1 ){//grow the array first
-            Arrays.c
-        }
-        for (int j = last; j >= pos; j--){
-            known_variants[j+1] = known_variants[j];
-            known_variants_values[j+1] = known_variants_values[j];
-        }
-        known_variants[pos] = Arrays.copyOf(variant, variant.length);
-        known_variants_values[pos] = value;
-        //don't forget to update the last mark
-        last++;
-    }
-
-    public double getVariantValue (int pos){
-        System.out.println(">>>> retrieving");
-        return known_variants_values[pos];
-    }
-
-    //returns 1 if variant1 is *lexographically* (i.e. in the order of tree branches where left is less and right is more)
-    //larger and -1 if variant 2 is larger
-    //and 0 if variants are the same
-    public int compare_variants (int[] variant1, int[] variant2){
-
-        for (int i = 0; i < variant1.length; i++){
-            if (variant1[i] > variant2[i]) return 1;
-            else if (variant1[i] < variant2[i]) return -1;
-            //else keep checking
-        }
-        return 0;
-    }
 
     //0 means that there is there is only 1 variant satisfying constraint so no point in engaging in further search
     //2 means that the whole tree satifies the constraint, also no point in searching

@@ -11,12 +11,24 @@ import java.util.Arrays;
  */
 public class Area extends Objective {
 
-    public Area(String units, String goal) {
-        super("area", units, goal);
+    private int mask; //maps the resources' order for this objective with that used in the repository
+
+    public Area(String units, String goal, ArrayList<Resource> res_list, VariantRepository rep) {
+        super("area", units, goal, res_list, rep);
     }
 
-    public Area(String units, String goal, double constraint) {
-        super("area", units, goal, constraint);
+    public Area(String units, String goal, double constraint, ArrayList<Resource> res_list, VariantRepository rep) {
+        super("area", units, goal, constraint, res_list, rep);
+    }
+
+
+    //how to convert from the order of the list to the order that is used in repository
+    public void createMask (ArrayList<Resource> list){
+        mask = new int[list.size()];
+        for (int i = 0; i < list.size(); i++){
+
+        }
+
     }
 
     //specification of the area objective function
@@ -25,9 +37,9 @@ public class Area extends Objective {
     public double evaluate(int[] variant) {
 
         //first check if this variant hasn't been evaluated already
-        int pos = findVariant(variant);
+        int pos = rep.findVariant(variant, mask);
         if (pos < 0) { //variant already has been computed before and value filed
-             return getVariantValue(pos);
+             return rep.getVariantValue(pos);
         } else  { //computer the value of variant and insert it
 
 
@@ -55,5 +67,10 @@ public class Area extends Objective {
             insertVariant(variant, area, pos);
             return area;
         }
+    }
+
+
+    public int find_Variant (int[] var){
+
     }
 }
