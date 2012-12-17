@@ -40,7 +40,7 @@ public class Test {
         objectives[0] = new Area("units", "max",res_list, repository, 70);
 
         System.out.println(objectives[0].toString());
-
+        objectives[0].setMask(res_list);
         objectives[0].sortResources();
 
 
