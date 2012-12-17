@@ -53,9 +53,21 @@ public abstract class Resource {
         return name;
     }
 
+    public boolean getNotIncludedValue (){
+        return not_included;
+    }
+
     public abstract double getValue(String objective, int number);
 
     public abstract double getNextValue (String objective, int number);
+
+
+    public boolean equals (Resource r){
+        if (r == null) return false;
+        if  (this == r) return true;
+        if (getClass() != r.getClass()) return false;
+        return name.equals(r.getName()) && num == r.getNum() && not_included==r.getNotIncludedValue();
+    }
 
     public int getMin() {
         if (not_included) return 0;

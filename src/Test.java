@@ -11,13 +11,12 @@ import java.util.Arrays;
 public class Test {
     public static void main(String[] args) {
 
-        //define objectives
-        Objective[] objectives = new Objective[1];
-        objectives[0] = new Area("bla", "max",70);
-        String[] obj = {"area"};
-        ArrayList<Resource> res_list = new ArrayList<Resource>();
 
-        //test resources
+        ArrayList<Resource> res_list = new ArrayList<Resource>();
+        String[] obj = {"area"};
+
+
+        //create resources
         ResourceVersions adder = new ResourceVersions("adder",7 , obj, false);
         adder.setObjectiveValues(obj[0], new double[]{1.0,3.0,6.0, 7.0, 8.0,13.0, 14.0});
         ResourceCopies mult = new ResourceCopies("multiplier", 2, obj, false);
@@ -34,11 +33,17 @@ public class Test {
         res_list.add(mult);
         res_list.add(div);
         res_list.add(accum);
-        objectives[0].setResourceList(res_list);
+
+        VariantRepository repository = new VariantRepository(res_list);
+        //define objectives
+        Objective[] objectives = new Objective[1];
+        objectives[0] = new Area("units", "max",res_list, repository, 70);
 
         System.out.println(objectives[0].toString());
 
         objectives[0].sortResources();
+
+
         System.out.println(objectives[0].toString());
 
         objectives[0].findTightBorderVar();

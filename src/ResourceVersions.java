@@ -8,7 +8,7 @@ import java.util.Arrays;
  * To change this template use File | Settings | File Templates.
  */
 public class ResourceVersions extends Resource {
-    private double[][] objectiveValues; //array of values, each row is a list of values for a particular objective for each of the versions
+    private double[][] objectiveValues = null; //array of values, each row is a list of values for a particular objective for each of the versions
 
     //num - number of version of this resource that are avaialble
     public ResourceVersions(String name, int num, String[] objectives) {
@@ -57,6 +57,29 @@ public class ResourceVersions extends Resource {
 
         }
 
+    }
+
+    //makes and returns a defensive copy
+    public double[][] getObjectiveValues (){
+          if (objectiveValues == null) return null;
+           double[][] tmp = new double[objectiveValues.length][objectiveValues[0].length];
+          for (int i =0; i< objectiveValues.length; i++){
+                 tmp[i] = Arrays.copyOf(objectiveValues[i], objectiveValues[i].length);
+          }
+        return tmp;
+    }
+
+
+    public boolean equals (ResourceVersions r){
+
+        if ( super.equals(r) == false) return false;
+        for (int i = 0; i < objectiveValues.length; i++){
+            double[][] tmp = r.getObjectiveValues();
+            if (Arrays.equals(objectiveValues[i], tmp[i]) ==false)
+                return false;
+
+        }
+        return true;
     }
 
 }

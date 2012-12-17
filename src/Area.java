@@ -11,26 +11,45 @@ import java.util.Arrays;
  */
 public class Area extends Objective {
 
-    private int mask; //maps the resources' order for this objective with that used in the repository
+    private int[] mask=null; //maps the resources' order for this objective with that used in the repository
+
+    public Area(String units, String goal, ArrayList<Resource> res_list) {
+        super("area", units, goal, res_list);
+    }
+
+    public Area(String units, String goal, ArrayList<Resource> res_list, double constraint) {
+        super("area", units, goal, res_list);
+    }
 
     public Area(String units, String goal, ArrayList<Resource> res_list, VariantRepository rep) {
         super("area", units, goal, res_list, rep);
     }
 
-    public Area(String units, String goal, double constraint, ArrayList<Resource> res_list, VariantRepository rep) {
-        super("area", units, goal, constraint, res_list, rep);
+    public Area(String units, String goal, ArrayList<Resource> res_list, VariantRepository rep, double constraint) {
+        super("area", units, goal, res_list, rep, constraint);
     }
 
 
-    //how to convert from the order of the list to the order that is used in repository
-    public void createMask (ArrayList<Resource> list){
+    //convert from the order of the list to the order that is used in repository
+    public void setMask (ArrayList<Resource> list){
         mask = new int[list.size()];
+        ArrayList<Resource> tmp_list =  super.getResourceList();
         for (int i = 0; i < list.size(); i++){
-
+            //find the current resource in the list
+            for (int j = 0; j < tmp_list.size(); j++){
+                 if (tmp_list.get(j).equals(list.get(i))){
+                     mask[i] = j;
+                     break;
+                 }
+            }
         }
-
     }
 
+    //returns a defensive copy of mask
+    public int[] getMask (){
+        return Arrays.copyOf(mask, mask.length);
+    }
+    
     //specification of the area objective function
     //variant array specifies the numbers/versions in the same order as
     //presently stored in the list of resources
@@ -64,13 +83,11 @@ public class Area extends Objective {
 
             }
             System.out.println("Area for this variant is: " + area);
-            insertVariant(variant, area, pos);
+            rep.insertVariant(variant, mask, area, pos);
             return area;
         }
     }
 
 
-    public int find_Variant (int[] var){
 
-    }
 }

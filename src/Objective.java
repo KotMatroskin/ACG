@@ -19,7 +19,7 @@ import java.util.Collections;
 public abstract class Objective {
     private final String name; //name of the objectives
     private final int goal; //-1 - minimize, +1 - maximize, if constraint is set together with say min goal, then constraint is the upper bound, else it's a lower bound
-    private double constraint = 0;     //should be in the same units as what objective computes, it's inclusive
+    private double constraint;     //should be in the same units as what objective computes, it's inclusive, cannot initialize constraint to 0 for maximization objective, 0 may be a valid constraint
     private String units;
     private final ArrayList<Resource> res_list; //list of resources
     private int[] tight_border_var = null;
@@ -32,23 +32,35 @@ public abstract class Objective {
     //if objective is max then the acceptable variants need to be above or equal to constraint,
     //if objective is min then constraint is the maximum acceptable value of objective
 
-    public Objective(String name, String units, String goal, ArrayList<Resource> res_list, VariantRepository rep) {
-        this.res_list = res_list;
+    public Objective(String name, String units, String goal, ArrayList<Resource> res_list) {
         this.name = name;
         this.units = units;
-        this.rep = rep;
-        if (goal.equalsIgnoreCase("max"))
+        if (goal.equalsIgnoreCase("max")) {
             this.goal = 1;
-        else if (goal.equalsIgnoreCase("min"))
+            this.constraint = Integer.MIN_VALUE;
+        }
+        else if (goal.equalsIgnoreCase("min")){
             this.goal = -1;
-        else {
+
+        }        else {
             throw (new Error("An objective must have a 'min' or 'max' goal"));
         }
-
+        this.res_list = res_list;
 
     }
 
-    public Objective(String name, String units, String goal,  double constraint, ArrayList<Resource> res_list, VariantRepository rep) {
+    public Objective(String name, String units, String goal, ArrayList<Resource> res_list, double constraint ) {
+       this (name,units, goal, res_list);
+        this.constraint = constraint;
+    }
+
+    public Objective(String name, String units, String goal, ArrayList<Resource> res_list, VariantRepository rep) {
+        this (name,units, goal, res_list);
+        this.rep = rep;
+    }
+
+
+    public Objective(String name, String units, String goal, ArrayList<Resource> res_list,  VariantRepository rep, double constraint) {
         this(name, units, goal, res_list, rep);
         this.constraint = constraint;
     }
@@ -165,16 +177,14 @@ public abstract class Objective {
         }
     }
 
-    //divide each level and follow the max branch
+    //divide each level and follow the max branchtrying to land max/min onto constraint
     public boolean findTightBorderVar() {
 
-        //so I'm sort of trying to land max/min onto constraint
-        assert (constraint != 0); //it doesn't make sense to search for border variant when objective to max/min
 
-
-        double value;
-        int max, min, border; //indecies
-        Resource res;
+        if (constraint == Integer.MAX_VALUE)
+            tight_border_var = max_var; //it doesn't make sense to search for border variant when objective to max/min
+        if (constraint == Integer.MIN_VALUE)
+            tight_border_var= min_var;
 
         //check if constraint is viable
         int result = check_constraint();
@@ -183,8 +193,11 @@ public abstract class Objective {
         else if (result == 0 || result == 2) return true;
         else {
 
+            double value;
+            int max, min, border; //indecies
+            Resource res;
             tight_border_var = new int[res_list.size()];
-            int [] last_acceptable_var = new int[res_list.size()]; //TODO - initialize with all -1 since it's until the end only partially filled
+            int [] last_acceptable_var;
 
             if (goal > 0) { // MAXIMIZE
                     tight_border_var = Arrays.copyOf(min_var, min_var.length);
@@ -285,7 +298,7 @@ public abstract class Objective {
     public abstract double evaluate(int[] variant);
 
 
-    public abstract void createMask (ArrayList<Resource> list);
+    public abstract void setMask (ArrayList<Resource> list);
 
     public String toString() {
 

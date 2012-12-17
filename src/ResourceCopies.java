@@ -32,6 +32,11 @@ public class ResourceCopies extends Resource {
         objectiveValue[find(objective)] = value;
     }
 
+
+    public double[] getObjectiveValue(){
+        return Arrays.copyOf(objectiveValue, objectiveValue.length);
+    }
+
     //sorts the versions list in the order of values
 
     //TODO Maybe make getValue not abstract but separate for each type of resources
@@ -46,7 +51,11 @@ public class ResourceCopies extends Resource {
          return getValue(objective, num);
 
     }
-    
+
+    public boolean equals (ResourceCopies r){
+       return super.equals(r) && Arrays.equals(objectiveValue, r.getObjectiveValue());
+    }
+
 //    public void sortByValue(String objective) {
 //        Arrays.sort(objectiveValues[find(objective)]);
 //

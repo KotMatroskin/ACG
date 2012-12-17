@@ -34,10 +34,12 @@ public class VariantRepository {
     //assuming that the known_variants list is always kept sorted
     //positive number i means that that the variant was found at position i
     //negative number i means that the variant was not found but i would be the position where it would go into should it be inserted
+
     //mask array contains indecies that direct how to rearrange variant to match the order of resources in repository
     //for example, if the mask is [3,2,1...] and in the repository the resources are in order [A,B,C, ...] and the variant is
     //[0,8,9...] then after the application of the mask the variant will be converted to [9,8,0,...]
     public int findVariant (int[] variant, int[] mask){
+        variant = apply_mask(variant, mask);
         if (last > 0) {
             for (int i = 0; i < known_variants.length; i++){
                 if (compare_variants(variant, known_variants[i]) < 0){ //reached the area of variant larger than current one
@@ -57,13 +59,18 @@ public class VariantRepository {
     // a safe copy of a parameter is made
     //will insert at any valid position pos no additional checks are made to keep
     //known_variants list sorted or non-sparse
-    public void insertVariant (int[] variant, double value, int pos){
+    //value - value of the variant
+    //mask will be used to arrange the variant in the same order of resources as used in repository
+    public void insertVariant (int[] variant,  int[] mask, double value, int pos){
 
+        //first apply the mask
+        variant = apply_mask(variant, mask);
+        
         //shift the variant up to free up the space at pos
 
         //check that shifting can be done
         if (last == known_variants.length-1 ){//grow the array first
-            int[] newArray = new int[known_variants.length + 10]
+            int[] newArray = new int[known_variants.length + 10];
         }
         for (int j = last; j >= pos; j--){
             known_variants[j+1] = known_variants[j];
@@ -83,6 +90,7 @@ public class VariantRepository {
     //returns 1 if variant1 is *lexographically* (i.e. in the order of tree branches where left is less and right is more)
     //larger and -1 if variant 2 is larger
     //and 0 if variants are the same
+    //the numeric value returned does not bear any information on the "amount" of difference between variants.
     public int compare_variants (int[] variant1, int[] variant2){
 
         for (int i = 0; i < variant1.length; i++){
@@ -93,14 +101,24 @@ public class VariantRepository {
         return 0;
     }
 
-    private int[] apply_mask (int[] variant, int[] mask){
+    private static int[] apply_mask (int[] variant, int[] mask){
          int[] masked_variant = new int[variant.length];
         
         for (int i = 0; i < variant.length; i++){
             masked_variant[i] = variant[mask[i]];
 
         }
-        
+        return masked_variant;
     }
 
+
+
+
+
+    public static void main(String[] args) {
+        int[] m = {2,4,6,3,1};
+        int[] mask = {2,0,1,4,3};
+        System.out.println(Arrays.toString(apply_mask (m, mask)));
+    
+    }
 }

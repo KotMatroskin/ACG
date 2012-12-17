@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -13,7 +14,7 @@ public class Test2 {
 
         //define objectives
         Objective[] objectives = new Objective[1];
-        objectives[0] = new Area("area", "min", 11);
+        ArrayList<Resource> res_list = new ArrayList<Resource>();
         String[] obj = {"area"};
 
         ResourceCopies A = new ResourceCopies("A", 1, obj);
@@ -31,11 +32,13 @@ public class Test2 {
         ResourceCopies E = new ResourceCopies("E", 1, obj);
         E.setObjectiveValues(obj[0], 3);
 
-        objectives[0].addResource(A);
-        objectives[0].addResource(B);
-        objectives[0].addResource(C);
-        objectives[0].addResource(D);
-        objectives[0].addResource(E);
+        res_list.add(A);
+        res_list.add(B);
+        res_list.add(C);
+        res_list.add(D);
+        res_list.add(E);
+
+        objectives[0] = new Area("area", "min", res_list, 11);
 
         objectives[0].sortResources();
         System.out.println(objectives[0].toString());
