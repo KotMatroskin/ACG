@@ -25,10 +25,25 @@ public class VariantRepository {
     //it is more efficient to give the resource list in the order arranged for at least one objective
 
     public VariantRepository(ArrayList<Resource> res_list){
-            this.res_list = res_list;
+            this.res_list = new ArrayList<Resource>(res_list);
+
+        //initialize known_variants to be log n in size + half of that
+        //calculate the total number of permutations
+        int num_variants = 1;
+        int size = 0;
+        for (int i = 0; i < res_list.size(); i++){
+             size += Math.round( Math.log (res_list.get(i).getMaxNumBranches()) / Math.log(2));
+        }
+             
+        size += res_list.size() + 2;  //2 accounts for max/min)  and adding res_list size accounts for variants computed during k-values calculation
+
+        known_variants = new int[size][res_list.size()];
+        known_variants_values = new double[size];
     }
 
-
+    public ArrayList<Resource> getResourceList (){
+        return  res_list;
+    }
     
     //TODO implement binary search instead
     //assuming that the known_variants list is always kept sorted
@@ -38,20 +53,30 @@ public class VariantRepository {
     //mask array contains indecies that direct how to rearrange variant to match the order of resources in repository
     //for example, if the mask is [3,2,1...] and in the repository the resources are in order [A,B,C, ...] and the variant is
     //[0,8,9...] then after the application of the mask the variant will be converted to [9,8,0,...]
-    public int findVariant (int[] variant, int[] mask){
-        variant = apply_mask(variant, mask);
+
+    //returns an array of size 2. The frist element of that array is either 0 or 1. 0 meaning that element was not found
+    //and 1 meaning that it was found. The second element contains the position at which the element was found or at the
+    //position where it should be inserted to maintain the ascending order in the case that element was not found
+    public int[] findVariant (int[] variant, int[] mask){
+
+        int[] masked_variant = apply_mask(variant, mask);
+        int[] result = {0,0};
         if (last > 0) {
             for (int i = 0; i < known_variants.length; i++){
-                if (compare_variants(variant, known_variants[i]) < 0){ //reached the area of variant larger than current one
-                    return -i;    //now i is empty
+                if (compare_variants(masked_variant, known_variants[i]) < 0){ //reached the area of variant larger than current one
+                    result [1] = i;
+                    return result;
                 }
-                if  (compare_variants(variant, known_variants[i]) == 0)
-                    return i;
+                if  (compare_variants(masked_variant, known_variants[i]) == 0){   //found variant
+                    result[0] = 1;
+                    result [1] = i;
+                    return result;
+                }
 
             }
 
         }
-        return 0;
+        return result;
 
     }
 
@@ -63,16 +88,30 @@ public class VariantRepository {
     //mask will be used to arrange the variant in the same order of resources as used in repository
     public void insertVariant (int[] variant,  int[] mask, double value, int pos){
 
+        ////System.out.println ("INSERTING  variant " + Arrays.toString(variant));
         //first apply the mask
         variant = apply_mask(variant, mask);
         
         //shift the variant up to free up the space at pos
 
         //check that shifting can be done
-        if (last == known_variants.length-1 ){//grow the array first
-            int[] newArray = new int[known_variants.length + 10];
+        //System.out.println(known_variants.length);
+        //System.out.println(last);
+        if (last >= known_variants.length-1 ){//grow the array first
+            System.out.println ("%%%%%%% Growing");
+            int[][] newArray = new int[known_variants.length + 10][];
+            double[] newValues = new double[known_variants.length + 10];
+            //copy into new array
+            for (int i = 0; i < known_variants.length; i++){
+                newArray[i] = known_variants[i];
+                newValues[i] = known_variants_values[i];
+            }
+            known_variants = newArray;
+            known_variants_values = newValues;
         }
+
         for (int j = last; j >= pos; j--){
+
             known_variants[j+1] = known_variants[j];
             known_variants_values[j+1] = known_variants_values[j];
         }
@@ -91,7 +130,7 @@ public class VariantRepository {
     //larger and -1 if variant 2 is larger
     //and 0 if variants are the same
     //the numeric value returned does not bear any information on the "amount" of difference between variants.
-    public int compare_variants (int[] variant1, int[] variant2){
+    public static int compare_variants (int[] variant1, int[] variant2){
 
         for (int i = 0; i < variant1.length; i++){
             if (variant1[i] > variant2[i]) return 1;
@@ -119,6 +158,8 @@ public class VariantRepository {
         int[] m = {2,4,6,3,1};
         int[] mask = {2,0,1,4,3};
         System.out.println(Arrays.toString(apply_mask (m, mask)));
+
+        System.out.println (compare_variants(m, mask));
     
     }
 }

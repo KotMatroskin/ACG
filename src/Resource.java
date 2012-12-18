@@ -99,4 +99,13 @@ public abstract class Resource {
         }
         return -1;
     }
+    
+    public String toString (){
+        String s = "Resource " + name + ", "+num + "versions/copies exist. ";
+        if (not_included)
+            s = s+ " This resource maybe omitted";
+        else
+            s+= "At least 1 of this resource is always included.";
+        return s;
+    }
 }

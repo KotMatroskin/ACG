@@ -45,7 +45,7 @@ public abstract class Objective {
         }        else {
             throw (new Error("An objective must have a 'min' or 'max' goal"));
         }
-        this.res_list = res_list;
+        this.res_list = new ArrayList<Resource>(res_list);
 
     }
 
@@ -101,6 +101,10 @@ public abstract class Objective {
             double tmp = kValues[0];
             kValues[0] = kValues[r];
             kValues[r] = tmp;
+
+            //since resource order was swapped, need to update the mask
+            setMask(rep.getResourceList());
+
             System.out.println("---------");
             System.out.println("Now the resources are in this order (computing k value):");
             for (int m = 0; m < res_list.size(); m++) {
@@ -162,6 +166,10 @@ public abstract class Objective {
             System.out.println(Arrays.toString(kValues));
 
         }
+        //now that the resources are in the final appropriate order update the mask again
+        setMask(rep.getResourceList());
+
+
         //at this point the resource list is ordered such that most influencial resource is on the top
 
         //can also fill in max and min variant composition - just for easiness
@@ -204,7 +212,7 @@ public abstract class Objective {
                     tight_border_var[0] = -1; //just to take care of the case when first level has two branches, therefore resulting in rounding down branch being executed and it shouldn't be on the first level. This is only necessary for this specific case and only has to do with rounding (which has to be corrected with rounding down when appropriate)
             } else { //MINIMIZE
                     tight_border_var = Arrays.copyOf(max_var,max_var.length);
-                    tight_border_var[0] = -1;//res_list.get(0).getMin();
+                    tight_border_var[0] = -1;
             }
 
             last_acceptable_var = Arrays.copyOf(tight_border_var, tight_border_var.length);

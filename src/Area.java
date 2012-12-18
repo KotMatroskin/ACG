@@ -11,7 +11,7 @@ import java.util.Arrays;
  */
 public class Area extends Objective {
 
-    private int[] mask=null; //maps the resources' order for this objective with that used in the repository
+    private int[] mask = null; //maps the resources' order for this objective with that used in the repository
 
     public Area(String units, String goal, ArrayList<Resource> res_list) {
         super("area", units, goal, res_list);
@@ -30,36 +30,48 @@ public class Area extends Objective {
     }
 
 
-    //convert from the order of the list to the order that is used in repository
-    public void setMask (ArrayList<Resource> list){
+    //convert from the order of the list to the order that is used in repository (specified by parameter list)
+    public void setMask(ArrayList<Resource> list) {
+        ////System.out.println(" ----------> MASKING and right no mask is " + Arrays.toString(mask));
         mask = new int[list.size()];
-        ArrayList<Resource> tmp_list =  super.getResourceList();
+        ArrayList<Resource> tmp_list = super.getResourceList();
+
         for (int i = 0; i < list.size(); i++){
+            ////System.out.println("*** " + list.get(i).toString());
+            ////System.out.println("^^^ " + tmp_list.get(i).toString());
+    }
+        for (int i = 0; i < list.size(); i++) {
             //find the current resource in the list
-            for (int j = 0; j < tmp_list.size(); j++){
-                 if (tmp_list.get(j).equals(list.get(i))){
-                     mask[i] = j;
-                     break;
-                 }
+            for (int j = 0; j < tmp_list.size(); j++) {
+                if (tmp_list.get(j).equals(list.get(i))) {
+                    mask[i] = j;
+                    break;
+                }
             }
         }
+        System.out.println(" ----------> MASKING and right no mask is " + Arrays.toString(mask));
     }
 
     //returns a defensive copy of mask
-    public int[] getMask (){
+    public int[] getMask() {
         return Arrays.copyOf(mask, mask.length);
     }
-    
+
     //specification of the area objective function
     //variant array specifies the numbers/versions in the same order as
     //presently stored in the list of resources
     public double evaluate(int[] variant) {
 
         //first check if this variant hasn't been evaluated already
-        int pos = rep.findVariant(variant, mask);
-        if (pos < 0) { //variant already has been computed before and value filed
-             return rep.getVariantValue(pos);
-        } else  { //computer the value of variant and insert it
+        int pos;
+        System.out.println ("Evaluating and mask is " + Arrays.toString(mask));
+        int[] result = rep.findVariant(variant, mask);
+        pos = result[1];
+        if (result[0] == 1) { //found the variant
+            System.out.println("Found variant " + Arrays.toString(variant) + " at position " + pos);
+            //variant already has been computed before and value filed
+            return rep.getVariantValue(pos);
+        } else { //computer the value of variant and insert it
 
 
             System.out.println("Evalute variant: " + Arrays.toString(variant));
@@ -87,7 +99,6 @@ public class Area extends Objective {
             return area;
         }
     }
-
 
 
 }
