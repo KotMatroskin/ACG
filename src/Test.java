@@ -34,7 +34,7 @@ public class Test {
         res_list.add(div);
         res_list.add(accum);
 
-        VariantRepository repository = new VariantRepository(res_list);
+        VariantRepository repository = new VariantRepository(res_list, obj);
         //define objectives
         Objective[] objectives = new Objective[1];
         objectives[0] = new Area("units", "max",res_list, repository, 70);

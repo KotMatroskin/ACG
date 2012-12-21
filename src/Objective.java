@@ -26,6 +26,7 @@ public abstract class Objective {
     private int[] loose_border_var = null;
     private int[] max_var;
     private int[] min_var;
+    protected int[] mask = null; //maps the resources' order for this objective with that used in the repository
     
     protected VariantRepository rep;
 
@@ -78,10 +79,40 @@ public abstract class Objective {
         return name;
     }
 
+    //returns a defensive copy of mask
+    public int[] getMask() {
+        return Arrays.copyOf(mask, mask.length);
+    }
+
     //TODO return a safe copy?
     public int[] getTight_border_var() {
         return tight_border_var;
     }
+
+
+    //convert from the order of the list to the order that is used in repository (specified by parameter list)
+    public void setMask(ArrayList<Resource> list) {
+        ////System.out.println(" ----------> MASKING and right no mask is " + Arrays.toString(mask));
+        mask = new int[list.size()];
+
+
+        for (int i = 0; i < list.size(); i++){
+            ////System.out.println("*** " + list.get(i).toString());
+            ////System.out.println("^^^ " + tmp_list.get(i).toString());
+        }
+        for (int i = 0; i < list.size(); i++) {
+            //find the current resource in the list
+            for (int j = 0; j <  res_list.size(); j++) {
+                if ( res_list.get(j).equals(list.get(i))) {
+                    mask[i] = j;
+                    break;
+                }
+            }
+        }
+        System.out.println(" ----------> MASKING and right no mask is " + Arrays.toString(mask));
+    }
+
+
 
     //sorts the list of resources based on K value
     public void sortResources() {
@@ -305,8 +336,6 @@ public abstract class Objective {
 
     public abstract double evaluate(int[] variant);
 
-
-    public abstract void setMask (ArrayList<Resource> list);
 
     public String toString() {
 
