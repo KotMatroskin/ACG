@@ -165,6 +165,7 @@ public class VariantRepository {
 
 
 
+
     private static int[] apply_mask(int[] variant, int[] mask) {
         int[] masked_variant = new int[variant.length];
 

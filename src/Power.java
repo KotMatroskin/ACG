@@ -27,7 +27,7 @@ import java.util.Arrays;
             super("Power", units, goal, res_list, rep, constraint);
         }
 
-
+        //to evaluate power we need to know the area and the wattage of the clock
         public double evaluate(int[] variant) {
             return 2.0;
         }

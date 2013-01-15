@@ -13,40 +13,58 @@ public class Test {
 
 
         ArrayList<Resource> res_list = new ArrayList<Resource>();
-        String[] obj = {"area"};
+        String[] obj = {"area", "power"};
 
 
         //create resources
         ResourceVersions adder = new ResourceVersions("adder",7 , obj, false);
         adder.setObjectiveValues(obj[0], new double[]{1.0,3.0,6.0, 7.0, 8.0,13.0, 14.0});
+
         ResourceCopies mult = new ResourceCopies("multiplier", 2, obj, false);
         mult.setObjectiveValues(obj[0], 20);
+
         ResourceVersions div = new ResourceVersions("divider", 6, obj, true);
         div.setObjectiveValues(obj[0], new double[]{5.0, 8.0, 9.0, 13.0, 15.0, 25.0});
         //ResourceCopies accum = new ResourceCopies("accum", 2, obj, false);
+
         ResourceVersions accum = new ResourceVersions("accum", 4, obj, false);
         accum.setObjectiveValues(obj[0], new double[] {20,80.0,90,100});
 
-
+        Clock clock = new Clock("clock", 3, obj, false);
+        clock.setObjectiveValues(obj[0], new double[] {2.0,3.0,9.0});
+        clock.setObjectiveValues(obj[1], new double[] {100.0,140.0,800.0});
 
         res_list.add(adder);
         res_list.add(mult);
         res_list.add(div);
         res_list.add(accum);
+        res_list.add(clock);
 
         VariantRepository repository = new VariantRepository(res_list, obj);
         //define objectives
-        Objective[] objectives = new Objective[1];
+        Objective[] objectives = new Objective[2];
         objectives[0] = new Area("units", "max",res_list, repository, 70);
+        objectives[1] = new Power("mW", "min", res_list, repository);
 
+        //------- Area --------
         System.out.println(objectives[0].toString());
         objectives[0].setMask(res_list);
         objectives[0].sortResources();
-
-
         System.out.println(objectives[0].toString());
 
         objectives[0].findTightBorderVar();
         System.out.println(Arrays.toString(objectives[0].getTight_border_var()));
+        
+        
+        //----- Power -------
+        //I can flood the values of computed variants for area for power too, since it's area*power
+        ArrayList<Resource> tmp = repository.getResourceList();
+        for (int i = 0; i < tmp.size(); i++){
+            if (tmp.get(i) != null){
+                //use the area value to compute power
+                //tmp.g
+            }
+        }
+
     }
 }
