@@ -13,7 +13,7 @@ public class Test {
 
 
         ArrayList<Resource> res_list = new ArrayList<Resource>();
-        String[] obj = {"area", "power"};
+        String[] obj = {"area", "Power"};
 
 
         //create resources
@@ -44,9 +44,9 @@ public class Test {
         //define objectives
         Objective[] objectives = new Objective[2];
         objectives[0] = new Area("units", "max",res_list, repository, 70);
-        objectives[1] = new Power("mW", "min", res_list, repository);
+        objectives[1] = new Power(clock, "mW", "min", res_list, repository, (Area) objectives[0]);
 
-        //------- Area --------
+        //------- Arrange ACG space for Area objective --------
         System.out.println(objectives[0].toString());
         objectives[0].setMask(res_list);
         objectives[0].sortResources();
@@ -54,17 +54,27 @@ public class Test {
 
         objectives[0].findTightBorderVar();
         System.out.println(Arrays.toString(objectives[0].getTight_border_var()));
+
+        repository.printRepository();
+        /*int[] variant = {4,2,5,6,3};
+        int[] mask =  {3,1,0,2,4};
+        int[] result = repository.findVariant(variant,mask,"area");
+        System.out.println(repository.getVariantValue (result[1],"area"));
+        /*
         
-        
-        //----- Power -------
-        //I can flood the values of computed variants for area for power too, since it's area*power
-        ArrayList<Resource> tmp = repository.getResourceList();
-        for (int i = 0; i < tmp.size(); i++){
-            if (tmp.get(i) != null){
-                //use the area value to compute power
-                //tmp.g
-            }
-        }
+        /*
+        //----- Arrange ACG space for Power objective -------
+        //Theoretically, the value for power can be flooded into repository,
+        // since it'sarea*power, but here it's not assumed so the full process is carried out
+        System.out.println("\n\n"+objectives[1].toString());
+        objectives[1].setMask(res_list);
+        objectives[1].sortResources();
+        System.out.println(objectives[1].toString());
+
+        objectives[1].findTightBorderVar();
+        System.out.println(Arrays.toString(objectives[1].getTight_border_var()));
+        */
+
 
     }
 }

@@ -40,9 +40,8 @@ public class ResourceVersions extends Resource {
     public double getValue(String objective, int number) {
         if (number == 0) return 0;
         else {
-            //System.out.println("->" + super.getName() + " " + objective + " " + number + " " + objectiveValues[0].length);
+            System.out.println(number);
             return objectiveValues[find(objective)][number - 1];
-
         }
 
     }

@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Created by IntelliJ IDEA.
@@ -47,9 +48,11 @@ public class VariantRepository {
 
     }
 
-    //it's ok to return the list itself since it is final
+    //returns the unmodifiable list of resources in the order that is used to reference variants in repository
+    //this is used to compute masks to convert between variants represented in the arranged orders for particular objectives
     public ArrayList<Resource> getResourceList() {
-        return res_list;
+        ArrayList<Resource> tmp = new ArrayList<Resource>(Collections.unmodifiableList(res_list));
+        return tmp;
     }
 
     //TODO implement binary search instead
@@ -71,17 +74,20 @@ public class VariantRepository {
             for (int i = 0; i < known_variants.length; i++) {
                 if (compare_variants(masked_variant, known_variants[i]) < 0) { //reached the area of variant larger than current one
                     result[1] = i;
+                    System.out.println("I was looking for variant " + Arrays.toString(variant) + "found and result is " + Arrays.toString(result));
                     return result;
                 }
-                if (compare_variants(masked_variant, known_variants[i]) == 0 && known_variants_values[i][obj_num] != Double.NaN) {   //found variant and check that the value for given objective was computed
+                if (compare_variants(masked_variant, known_variants[i]) == 0 && Double.isNaN(known_variants_values[i][obj_num])) {   //found variant and check that the value for given objective was computed
                     result[0] = 1;
                     result[1] = i;
+                    System.out.println("I was looking for variant " + Arrays.toString(variant) + "found and result is " + Arrays.toString(result));
                     return result;
                 }
 
             }
 
         }
+        System.out.println("I was looking for variant " + Arrays.toString(variant) + "found and result is " + Arrays.toString(result));
         return result;
 
     }
@@ -94,16 +100,17 @@ public class VariantRepository {
     //mask will be used to arrange the variant in the same order of resources as used in repository
     public void insertVariant(int[] variant, int[] mask, double value, String objective, int pos) {
 
-        ////System.out.println ("INSERTING  variant " + Arrays.toString(variant));
+        System.out.println("INSERTING  variant " + Arrays.toString(variant) + "at position " + pos);
         //first apply the mask
         variant = apply_mask(variant, mask);
 
         int obj_num = findObjective(objective);
 
         //check if the given pos is empty
-        if (known_variants[pos] != null) {
+        System.out.println("checking if empty" + known_variants_values[pos][obj_num]);
+        if (!Double.isNaN(known_variants_values[pos][obj_num])) {
 
-
+            System.out.println("Not empty");
             //check that shifting can be done
             //System.out.println(known_variants.length);
             //System.out.println(last);
@@ -113,7 +120,7 @@ public class VariantRepository {
                 double[][] newValues = new double[known_variants.length + 10][objectives.length];
                 //fill the newly created cells with NaNs
                 for (int i = known_variants_values.length; i < newValues.length; i++)
-                    Arrays.fill(newValues[i],Double.NaN);
+                    Arrays.fill(newValues[i], Double.NaN);
                 //copy into new array
                 for (int i = 0; i < known_variants.length; i++) {
                     newArray[i] = known_variants[i];
@@ -125,19 +132,24 @@ public class VariantRepository {
 
 
             //shift the variant up to free up the space at pos
-            for (int j = last; j >= pos; j--) {
+            System.out.println("What is last? " + last + " and position is " + pos);
+            for (int j = last; j > pos; j--) {
 
-                known_variants[j + 1] = known_variants[j];
-                known_variants_values[j + 1] = known_variants_values[j];
+                known_variants[j] = known_variants[j-1];
+                known_variants_values[j] = known_variants_values[j-1];
+                System.out.println("###########");
+                System.out.println(Arrays.toString(known_variants_values[j + 1]));
+                System.out.println(Arrays.toString(known_variants_values[j]));
+                System.out.println("############");
             }
         }
 
         //proceed with insertion, either slot at pos is empty or it wasn't and space was prepared above
-
-            known_variants[pos] = Arrays.copyOf(variant, variant.length);
-            known_variants_values[pos][obj_num] = value;
-            //don't forget to update the last mark
-            last++;
+        System.out.println("Insert!");
+        known_variants[pos] = Arrays.copyOf(variant, variant.length);
+        known_variants_values[pos][obj_num] = value;
+        //don't forget to update the last mark
+        last++;
 
     }
 
@@ -145,7 +157,7 @@ public class VariantRepository {
     //This method is inteded to be used after findVariant method
     //Returns: NaN if no value is stored for the specified objective or the value for that objective
     public double getVariantValue(int pos, String objective) {
-        System.out.println(">>>> retrieving");
+        System.out.println(">>>> retrieving this value" + known_variants_values[pos][findObjective(objective)]);
         return known_variants_values[pos][findObjective(objective)];
     }
 
@@ -164,6 +176,13 @@ public class VariantRepository {
     }
 
 
+    public void printRepository() {
+        for (int i = 0; i < known_variants.length; i++) {
+
+            System.out.print(Arrays.toString(known_variants[i]) + " " + Arrays.toString(known_variants_values[i]) + "\n");
+
+        }
+    }
 
 
     private static int[] apply_mask(int[] variant, int[] mask) {

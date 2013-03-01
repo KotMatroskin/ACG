@@ -37,6 +37,7 @@ public class Area extends Objective {
     //presently stored in the list of resources
     public double evaluate(int[] variant) {
 
+        System.out.println("Calling area evaluate with variant " + Arrays.toString(variant));
         //first check if this variant hasn't been evaluated already
         int pos;
         System.out.println ("Evaluating and mask is " + Arrays.toString(mask));
@@ -49,7 +50,7 @@ public class Area extends Objective {
         } else { //computer the value of variant and insert it
 
 
-            System.out.println("Evalute variant: " + Arrays.toString(variant));
+            System.out.println("Evaluate variant: " + Arrays.toString(variant));
 
             ArrayList<Resource> resources = super.getResourceList();
 
@@ -64,7 +65,7 @@ public class Area extends Objective {
                 //System.out.println(variant[0] + "-----");
                 if (variant[i] != 0) {
 
-                    //System.out.println(super.getName() + " varinat " + Arrays.toString(variant));
+                    System.out.println(super.getName() + " varinat " + Arrays.toString(variant));
                     area += resources.get(i).getValue(super.getName(), variant[i]);
                 }
 

@@ -8,6 +8,10 @@ import java.util.Arrays;
  * To change this template use File | Settings | File Templates.
  */
 
+
+//for the power objective the clock should store the values of actual power needed to run at particular frequency, since
+    //frequency itself is not needed for power computation
+    //frequency value can be stored for another objective, for example in performance objective
 public class Clock extends Resource {
     private double[][] objectiveValues = null; //array of values, each row is a list of values for a particular objective for each of the versions
 
@@ -41,6 +45,7 @@ public class Clock extends Resource {
     public double getValue(String objective, int number) {
         if (number == 0) return 0;
         else {
+            System.out.println(number + " " + find(objective));
             //System.out.println("->" + super.getName() + " " + objective + " " + number + " " + objectiveValues[0].length);
             return objectiveValues[find(objective)][number - 1];
 
