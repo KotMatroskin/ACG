@@ -56,13 +56,9 @@ public class Test {
         System.out.println(Arrays.toString(objectives[0].getTight_border_var()));
 
         repository.printRepository();
-        /*int[] variant = {4,2,5,6,3};
-        int[] mask =  {3,1,0,2,4};
-        int[] result = repository.findVariant(variant,mask,"area");
-        System.out.println(repository.getVariantValue (result[1],"area"));
-        /*
+
         
-        /*
+
         //----- Arrange ACG space for Power objective -------
         //Theoretically, the value for power can be flooded into repository,
         // since it'sarea*power, but here it's not assumed so the full process is carried out
@@ -73,7 +69,7 @@ public class Test {
 
         objectives[1].findTightBorderVar();
         System.out.println(Arrays.toString(objectives[1].getTight_border_var()));
-        */
+
 
 
     }

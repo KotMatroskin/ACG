@@ -20,7 +20,7 @@ public class Power extends Objective {
     //is not something that is being optimized, then the area will be computed, otherwise it will be
     //looked-up in repository first, if not found it would be computed and saved there.
 
-    
+
     public Power(Clock clck, String units, String goal, ArrayList<Resource> res_list) {
         super("Power", units, goal, res_list);
         this.clck = clck;
@@ -71,49 +71,65 @@ public class Power extends Objective {
     //to evaluate power we need to know the area and the wattage of the clock
     public double evaluate(int[] variant) {
         System.out.println("****** Calling power evaluate with variant" + Arrays.toString(variant));
-        //need to find out where is the clck in the arrangement,
-        // it is done every time until the space is fully arranged
-        if (super.getArranged() == false || (super.getArranged() && pos==-1)){
-            pos = super.getResourceList().indexOf(clck);
-            System.out.println("the clock is right now at " + pos);
+
+
+        
+        int[] result = rep.findVariant(variant, mask);    //search in repository
+        pos = result[1];
+        if (result[0] == 1 && rep.checkObjectiveValue(pos, super.getName())) {  //the variant is in repository
+
+            //variant already has been computed before and value filed
+            System.out.println("Found variant " + Arrays.toString(variant) + " at position " + pos);
+            return rep.getVariantValue(pos, super.getName());
+
+        } else { //either the variant was not computed before at all or was not computed for power objective,
+            //either way, compute and insert (the insert will take care of the details).
+
+
+            //need to find out where is the clck in the arrangement,
+            // it is done every time until the space is fully arranged
+            if (super.getArranged() == false || (super.getArranged() && pos == -1)) {
+                pos = super.getResourceList().indexOf(clck);
+                System.out.println("the clock is right now at " + pos);
+            }
+            //get the power/area value
+            Double power = (super.getResourceList()).get(pos).getValue("Power", variant[pos]);
+            System.out.println("here and power is now " + power);
+
+            //check if the area for this variant has been computed before and is in repository
+            //first check if area is an objective at all in this system
+            if (areaObjective == null) { //we need to compute the area ourselves
+                power = power * evaluate_area(variant);
+
+            } else { //area is an objective in this system so call evaluate method (it will/should take care of all the
+                //details of checking repository and inserting the value if needed
+                int[] tmp_mask = super.makeMaskforObjective(rep.getResourceList(), areaObjective.getMask());
+                System.out.println("Mask that converts power to area is " + Arrays.toString(tmp_mask));
+
+
+                System.out.println("Masked variant is" + Arrays.toString(convertToAnotherObjective(variant, tmp_mask)));
+                System.out.println("Area is : " + areaObjective.evaluate(super.convertToAnotherObjective(variant, tmp_mask)));
+                power = power * areaObjective.evaluate(super.convertToAnotherObjective(variant, tmp_mask));
+
+            }
+
+            if (!super.getArranged())
+                pos = -1; //this means evaluate is being called durign arrangement part
+
+            System.out.println("^^^ Now inserting returning power: " + power);
+            rep.insertVariant(variant, mask, power, super.getName(), pos);
+            return power;
         }
-        //get the power/area value
-        Double power = (super.getResourceList()).get(pos).getValue("Power",variant[pos]);
-        System.out.println("here and power is now " + power);
-
-        //check if the area for this variant has been computed before and is in repository
-        //first check if area is an objective at all in this system
-        if (areaObjective == null) { //we need to compute the area ourselves
-             power = power * evaluate_area(variant);
-
-        }    
-        else { //area is an objective in this system so call evaluate method (it will/should take care of all the
-            //details of checking repository and inserting the value if needed
-                int[] tmp_mask = super.makeMaskforObjective( rep.getResourceList(),areaObjective.getMask());
-            System.out.println("Mask that converts power to area is " + Arrays.toString(tmp_mask));
-                System.out.println("Masked variant is" + Arrays.toString(convertToAnotherObjective(variant,tmp_mask)));
-            System.out.println("Area is : " + areaObjective.evaluate(super.convertToAnotherObjective(variant,tmp_mask)));
-                power = power*areaObjective.evaluate(super.convertToAnotherObjective(variant,tmp_mask));
-
-                }    
-
-        if (!super.getArranged())
-            pos = -1; //this means evaluate is being called durign arrangement part
-
-        System.out.println("^^^ Now returning power: "+power);
-         return power;
-        }
-
-    public void setMask(ArrayList<Resource> list) {
     }
+
 
     //returns a defensive copy of mask
     public int[] getMask() {
         return Arrays.copyOf(mask, mask.length);
     }
-    
-    
-    private double evaluate_area (int[] variant){
+
+
+    private double evaluate_area(int[] variant) {
 
         ArrayList<Resource> resources = super.getResourceList();
 
@@ -130,8 +146,8 @@ public class Power extends Objective {
 
         }
         System.out.println("Area for this variant is: " + area);
-        
-        return area;     
+
+        return area;
     }
 }
 

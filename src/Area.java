@@ -41,16 +41,21 @@ public class Area extends Objective {
         //first check if this variant hasn't been evaluated already
         int pos;
         System.out.println ("Evaluating and mask is " + Arrays.toString(mask));
-        int[] result = rep.findVariant(variant, mask, super.getName());
+        int[] result = rep.findVariant(variant, mask);
         pos = result[1];
-        if (result[0] == 1) { //found the variant
-            System.out.println("Found variant " + Arrays.toString(variant) + " at position " + pos);
+
+        //now check if this variant has ever been evaluated for some objective and thus inserted in repository
+        if (result[0] == 1 && rep.checkObjectiveValue(pos,super.getName())){  //the variant is in repository
+
             //variant already has been computed before and value filed
+            System.out.println("Found variant " + Arrays.toString(variant) + " at position " + pos);
             return rep.getVariantValue(pos, super.getName());
-        } else { //computer the value of variant and insert it
+
+      } else { //either the variant was not computed before at all or was not computed for area objective,
+            //either way, compute and insert (the insert will take care of the details).
 
 
-            System.out.println("Evaluate variant: " + Arrays.toString(variant));
+            System.out.println("Evaluate variant AREA: " + Arrays.toString(variant));
 
             ArrayList<Resource> resources = super.getResourceList();
 
@@ -70,7 +75,8 @@ public class Area extends Objective {
                 }
 
             }
-            System.out.println("Area for this variant is: " + area);
+            System.out.println("Area for this variant is: " + area + "INSERT in AREA");
+
             rep.insertVariant(variant, mask, area, super.getName(), pos);
             return area;
         }

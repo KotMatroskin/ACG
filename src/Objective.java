@@ -101,15 +101,10 @@ public abstract class Objective {
     //The mask allows to convert a variant given in the order of resources kept in repository
     // to the order of resources kept in this objective. Repository is specified by parameter 'list'
     //When this method is called the 'list' should be requested from repository
-    protected void setMask(ArrayList<Resource> list) {
-        ////System.out.println(" ----------> MASKING and right no mask is " + Arrays.toString(mask));
+    public final void setMask(ArrayList<Resource> list) {
+
         mask = new int[list.size()];
 
-
-        for (int i = 0; i < list.size(); i++) {
-            ////System.out.println("*** " + list.get(i).toString());
-            ////System.out.println("^^^ " + tmp_list.get(i).toString());
-        }
         //go through the list order as in repository (this is the "master" order)
         for (int i = 0; i < list.size(); i++) {
             //find the current resource in the list
@@ -120,7 +115,6 @@ public abstract class Objective {
                 }
             }
         }
-        System.out.println(" ----------> MASKING and right now mask is " + Arrays.toString(mask));
     }
 
     //Generates a mask that could be used to convert a variant in the current objective to
@@ -134,18 +128,23 @@ public abstract class Objective {
     public int[] makeMaskforObjective(ArrayList<Resource> list, int[] other_objective_mask) {
         int[] converting_mask = new int[res_list.size()];
 
-        //first create the unmask from other objective mask (a mask takes a varian from an objective resource order to
+        //first create the unmask from other objective mask (a mask takes a variant from an objective resource order to
         //repository resource order, the unmask takes repository order to objective order
         int[] unmask = new int[other_objective_mask.length];
         for (int i = 0; i < other_objective_mask.length; i++){
             unmask[other_objective_mask[i]]=i;
         }
+        System.out.println("Other objective mask is :" + Arrays.toString(other_objective_mask));
+        System.out.println("unmask is :" + Arrays.toString(unmask));
 
-        if (mask != null) {
+
+        /*applying unmask on current mask will do the trick*/
+        if (arranged == true) {
             //now apply first the current mask followed by the unmask
             for (int i = 0; i < mask.length; i++) {
-                converting_mask[i] = unmask[mask[i]];
+                converting_mask[i] = mask[unmask[i]];
             }
+
         } else {   //the design space for current objective is not sorted yet, so a temporary mask can be generated
 
             //first create a temporary mask for the current state of resources
@@ -164,7 +163,7 @@ public abstract class Objective {
 
             //now apply first the current mask followed by the unmask
             for (int i = 0; i < tmp_mask.length; i++) {
-                converting_mask[i] = unmask[tmp_mask[i]];
+                converting_mask[i] = tmp_mask[unmask[i]];
             }
         }
 
@@ -260,6 +259,10 @@ public abstract class Objective {
             kValues[i] = kValues[largest];
             kValues[largest] = tmp;
             Collections.swap(res_list, i, largest);
+
+            //update the mask again, since resources were swaped in sorted order
+            setMask(rep.getResourceList());
+
             System.out.println("Now resources are in this order: ");
             for (int m = 0; m < res_list.size(); m++) {
                 System.out.println(res_list.get(m).getName());
