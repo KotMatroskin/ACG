@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class Power extends Objective {
 
     private Clock clck = null; //a pointer to the clock resource, that controls the power requirement
-    private int pos = -1; //the position of clock resource in the resource list, -1 - not checked yet
+    private int clck_pos = -1; //the position of clock resource in the resource list, -1 - not checked yet
     private Area areaObjective = null; //this a pointer to the area objective as its reference in repository
     //if Power objective is constructed without this string, which is possible, if area objective is
     //is not something that is being optimized, then the area will be computed, otherwise it will be
@@ -75,7 +75,7 @@ public class Power extends Objective {
 
         
         int[] result = rep.findVariant(variant, mask);    //search in repository
-        pos = result[1];
+        int pos = result[1];
         if (result[0] == 1 && rep.checkObjectiveValue(pos, super.getName())) {  //the variant is in repository
 
             //variant already has been computed before and value filed
@@ -88,12 +88,12 @@ public class Power extends Objective {
 
             //need to find out where is the clck in the arrangement,
             // it is done every time until the space is fully arranged
-            if (super.getArranged() == false || (super.getArranged() && pos == -1)) {
-                pos = super.getResourceList().indexOf(clck);
+            if (super.getArranged() == false || (super.getArranged() && clck_pos == -1)) {
+                clck_pos = super.getResourceList().indexOf(clck);
                 System.out.println("the clock is right now at " + pos);
             }
             //get the power/area value
-            Double power = (super.getResourceList()).get(pos).getValue("Power", variant[pos]);
+            Double power = (super.getResourceList()).get(clck_pos).getValue("Power", variant[clck_pos]);
             System.out.println("here and power is now " + power);
 
             //check if the area for this variant has been computed before and is in repository
@@ -113,19 +113,18 @@ public class Power extends Objective {
 
             }
 
-            if (!super.getArranged())
-                pos = -1; //this means evaluate is being called durign arrangement part
 
-            System.out.println("^^^ Now inserting returning power: " + power);
+
+            System.out.println("^^^ Now inserting and returning power: " + power + "at position " + pos);
             rep.insertVariant(variant, mask, power, super.getName(), pos);
+
+            //reset the position value if the space hasen't been arranged yet (that way on the next time around
+            //we know to check clock location again)
+            /*if (!super.getArranged())
+                clck_pos = -1; //this means evaluate is being called durign arrangement part*/
+
             return power;
         }
-    }
-
-
-    //returns a defensive copy of mask
-    public int[] getMask() {
-        return Arrays.copyOf(mask, mask.length);
     }
 
 

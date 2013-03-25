@@ -57,20 +57,23 @@ public class Test {
 
         repository.printRepository();
 
-        
-
+        System.out.println(Arrays.toString(objectives[0].getResourceList().toArray()));
+        objectives[0].toYGraph("sdf");
+        /*
         //----- Arrange ACG space for Power objective -------
         //Theoretically, the value for power can be flooded into repository,
         // since it'sarea*power, but here it's not assumed so the full process is carried out
         System.out.println("\n\n"+objectives[1].toString());
-        objectives[1].setMask(res_list);
+        objectives[1].setMask(res_list); //TODO check - I think not needed
         objectives[1].sortResources();
         System.out.println(objectives[1].toString());
 
         objectives[1].findTightBorderVar();
-        System.out.println(Arrays.toString(objectives[1].getTight_border_var()));
+        System.out.println("Border for power is " + Arrays.toString(objectives[1].getTight_border_var()));
+        System.out.println(Arrays.toString(objectives[0].getResourceList().toArray()));
 
-
-
+        int[] opt_var = Objective.optimize(objectives,objectives[1],repository);
+        System.out.println(Arrays.toString (opt_var));
+        */
     }
 }

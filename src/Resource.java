@@ -18,7 +18,7 @@ public abstract class Resource {
     // is not included at all is valid, and when false it means that at least one version or copy of this resources is
     //always included (even if it not actually used)
 
-    private String[] objectives;      // TODO make objectives list static?
+    private String[] objectives;
 
     public Resource (int num, String[] objectives) {
         this.num = num;
@@ -101,11 +101,11 @@ public abstract class Resource {
     }
     
     public String toString (){
-        String s = "Resource " + name + ", "+num + "versions/copies exist. ";
+        String s = "Resource " + name + ", "+num + " versions/copies exist. ";
         if (not_included)
-            s = s+ " This resource maybe omitted";
+            s = s+ " This resource maybe omitted. ";
         else
-            s+= "At least 1 of this resource is always included.";
+            s+= "At least 1 of this resource is always included. \n";
         return s;
     }
 }

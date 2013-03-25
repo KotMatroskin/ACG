@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class Performance extends Objective{
 
-    private int[] mask = null; //maps the resources' order for this objective with that used in the repository
+
 
     public Performance(String units, String goal, ArrayList<Resource> res_list) {
         super("performance", units, goal, res_list);
@@ -33,7 +33,7 @@ public class Performance extends Objective{
        return 2.0;
     }
 
-    public void setMask(ArrayList<Resource> list) {}
+    //public void setMask(ArrayList<Resource> list) {}
 
     //returns a defensive copy of mask
     public int[] getMask() {
