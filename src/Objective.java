@@ -531,7 +531,7 @@ public abstract class Objective {
 
         System.out.println("going into while");
 
-        while (!  (toOptimize.getGoal() == -1 && Arrays.equals(opt_variant, toOptimize.getMaxVariant()))){ //|| (toOptimize.getGoal() == +1 && Arrays.equals(opt_variant, toOptimize.getMinVariant())))) {
+        while (!(toOptimize.getGoal() == -1 && Arrays.equals(opt_variant, toOptimize.getMaxVariant()))) { //|| (toOptimize.getGoal() == +1 && Arrays.equals(opt_variant, toOptimize.getMinVariant())))) {
 
             System.out.println("in while");
 
@@ -556,7 +556,7 @@ public abstract class Objective {
             }
             if (pass) break; //so all constraints are satisfied get out of while
             //move to the next variant and start checking objectives all over
-            opt_variant = toOptimize.getNextVariant(opt_variant, toOptimize.getGoal()*(-1));
+            opt_variant = toOptimize.getNextVariant(opt_variant, toOptimize.getGoal() * (-1));
             System.out.println("Got next variant : " + Arrays.toString(opt_variant));
 
 
@@ -564,7 +564,7 @@ public abstract class Objective {
 
         //so if pass is false that means that while loop above has exhasted all variants of the to be optimized objective
         if (pass)
-        return opt_variant;
+            return opt_variant;
         else return null;
 
     }
@@ -581,7 +581,7 @@ public abstract class Objective {
         int i;
         if (left_right < 0) { //move to the left in the tree
             if (Arrays.equals(this_variant, min_var)) {
-                System.out.println ("equal min var");
+                System.out.println("equal min var");
                 return null; //already at the very left of the tree, nowhere to go
             }
             for (i = this_variant.length - 1; i >= 0; i--) {
@@ -597,7 +597,7 @@ public abstract class Objective {
 
         } else {    //move to the right in the tree
             if (Arrays.equals(this_variant, max_var)) {
-                System.out.println ("equal max var");
+                System.out.println("equal max var");
                 return null;
             }
             for (i = this_variant.length - 1; i >= 0; i--) {
@@ -633,44 +633,73 @@ public abstract class Objective {
         return output;
     }
 
-    public void toYGraph (String path){
+    public void toYGraph(String path) {
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(name + ".tgf"));
+            BufferedWriter out;
+            if (path != null)
+                out = new BufferedWriter(new FileWriter(path + ".tgf"));
+            else
+                out = new BufferedWriter(new FileWriter(name + ".tgf"));
 
             //write resources
-
-            //write first resource
-
-
-            out.write("1 "+res_list.get(0).getName()+"\n" );
-            int prev_num = 1;//res_list.get(0).getMaxNumBranches();
+            
+            int prev_num = 1;
             int num_nodes_pres_level = 1;
+            
+            //write first resource
+            out.write("0 " + res_list.get(0).getName() + "\n");
+            int[] variant;
+            int[] result;
+            for (int i = 0; i < res_list.size(); i++) {
+                for (int j = 0; j < num_nodes_pres_level * res_list.get(i).getMaxNumBranches(); j++) {
 
-            for (int i =0; i < res_list.size()-1; i++){
-                for (int j = 0; j < num_nodes_pres_level*res_list.get(i).getMaxNumBranches(); j++){
-                    out.write(prev_num+j+1 + " " + res_list.get(i+1).getName()+"\n");
+                    if (i < res_list.size() - 1) {
 
+                        out.write((prev_num + j) + " " + res_list.get(i + 1).getName() + "\n");
+                    } else {
+                        variant = variantNumberToSignature(j+1);
+                        result = rep.findVariant(variant,mask);
+                        if (result[0] == 0)
+                            //out.write((prev_num + j) + " " + (j+1) + "\n");
+                            out.write((prev_num + j) + " .");
+                        else {
+
+                            out.write((prev_num + j) + " " +rep.getVariantValue(result[1], name) + "\n");
+                        }
+                    }
                 }
-                num_nodes_pres_level = num_nodes_pres_level*res_list.get(i).getMaxNumBranches();
+                num_nodes_pres_level = num_nodes_pres_level * res_list.get(i).getMaxNumBranches();
                 prev_num += num_nodes_pres_level;
             }
             out.write("#\n");
 
+            for (int i = 1; i <= res_list.get(0).getMaxNumBranches(); i++) {
+                out.write("0 " + i + "\n");
+            }
 
-            for (int i =0; i < res_list.size()-1; i++){
-                for (int j = 0; j < num_nodes_pres_level*res_list.get(i).getMaxNumBranches(); j++){
-                    out.write(prev_num+j+1 + " " + res_list.get(i+1).getName()+"\n");
+            num_nodes_pres_level = 1;
+            prev_num = 1;
+            for (int i = 0; i < res_list.size()-1; i++) {
+                int branches = num_nodes_pres_level * res_list.get(i).getMaxNumBranches();
+                for (int j = 0; j < num_nodes_pres_level * res_list.get(i).getMaxNumBranches(); j++) {
+
+                    for (int k = 0; k < res_list.get(i + 1).getMaxNumBranches(); k++) {
+                        out.write((prev_num + j) + " " + (prev_num + j + branches + j * (res_list.get(i + 1).getMaxNumBranches() - 1) + k) + "\n");
+                    }
 
                 }
-                num_nodes_pres_level = num_nodes_pres_level*res_list.get(i).getMaxNumBranches();
+                num_nodes_pres_level = num_nodes_pres_level * res_list.get(i).getMaxNumBranches();
                 prev_num += num_nodes_pres_level;
             }
+
+
             out.close();
-        } catch (IOException e) {}
-        
+        } catch (IOException e) {
+        }
+
     }
-    
-    
+
+
     //left_right is -: left or + to the right
     private void increase_border_variant(int left_right) {
 
@@ -706,7 +735,40 @@ public abstract class Objective {
 
     }
 
+    //If the variants would be numbered from left to right (strating from 1) in a tree then each such number
+    //of a variant can be converted back to variant signature
+    //precondition 1: although the num can be long, none of the resources have more than
+    //size of int versions/copies - everything is cast into int when storing into variant signature
+    //precondition 2: the parameter num has to be less than total number of variants in current objective space
+    //there are no checks done in the method to verify this.
+        public int[] variantNumberToSignature (long num){
+                int[] variant = new int[res_list.size()];
+        long remainder;
+        int zero_branch = 0; //to account for cases when there is "zeroth" branch, i.e. resource can be ommited
+        for (int i = res_list.size()-1; i >0; i--){
+            remainder = num % res_list.get(i).getMaxNumBranches();
+            if (remainder == 0){
+                variant[i] = res_list.get(i).getMaxNumBranches();
+                num =  (num /res_list.get(i).getMaxNumBranches());
+            }
+            else {
+                variant[i] = (int)remainder;
+                num =  (num /res_list.get(i).getMaxNumBranches()) + 1;
+            }
+            //to account for cases when there is "zeroth" branch, i.e. resource can be ommited
+            if (res_list.get(i).getNotIncludedValue())
+                variant[i] -= 1;
 
+
+        }
+        //set root
+        variant[0] = (int)num;
+            
+
+         return variant;
+    }
+    
+    
     //0 means that there is there is only 1 variant satisfying constraint so no point in engaging in further search
     //1 means that part of the tree (but more than one variant) satisfies the constraint and border variant has to be searched for
     //2 means that the whole tree satisfies the constraint, also no point in searching

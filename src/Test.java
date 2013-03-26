@@ -58,6 +58,10 @@ public class Test {
         repository.printRepository();
 
         System.out.println(Arrays.toString(objectives[0].getResourceList().toArray()));
+
+        int[] variant = {2,1,3,2,4};
+        System.out.println (Arrays.toString(objectives[0].variantNumberToSignature(1)));
+
         objectives[0].toYGraph("sdf");
         /*
         //----- Arrange ACG space for Power objective -------

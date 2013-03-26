@@ -3,10 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="4d5c8532-8a51-49c0-8088-f9cd16a9fd59" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/area.tgf" afterPath="$PROJECT_DIR$/area.tgf" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Objective.java" afterPath="$PROJECT_DIR$/src/Objective.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Performance.java" afterPath="$PROJECT_DIR$/src/Performance.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Power.java" afterPath="$PROJECT_DIR$/src/Power.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Resource.java" afterPath="$PROJECT_DIR$/src/Resource.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Test.java" afterPath="$PROJECT_DIR$/src/Test.java" />
     </list>
     <ignored path="ACG.iws" />
@@ -72,8 +70,8 @@
       <property name="field_breakpoints_groupByClasses" value="true" />
       <property name="method_breakpoints_groupByClasses" value="true" />
       <property name="exception_breakpoints_viewId" value="TABLE" />
-      <property name="field_breakpoints_viewId" value="TABLE" />
       <property name="exception_breakpoints_groupByClasses" value="true" />
+      <property name="field_breakpoints_viewId" value="TABLE" />
       <property name="method_breakpoints_groupByMethods" value="false" />
     </ui_properties>
   </component>
@@ -85,10 +83,13 @@
       <file leaf-file-name="Objective.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Objective.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="652" column="116" selection-start="28774" selection-end="28774" vertical-scroll-proportion="0.37258348">
+            <state line="662" column="60" selection-start="29268" selection-end="29268" vertical-scroll-proportion="0.41241685">
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#4187#4197#0" expanded="true" />
+                <element signature="method#increase_border_variant#0;class#Objective#0" expanded="false" />
+                <element signature="method#variantNumberToSignature#0;class#Objective#0" expanded="false" />
+                <element signature="method#check_constraint#0;class#Objective#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -97,7 +98,7 @@
       <file leaf-file-name="VariantRepository.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/VariantRepository.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="131" column="0" selection-start="6451" selection-end="6451" vertical-scroll-proportion="0.0">
+            <state line="72" column="17" selection-start="3516" selection-end="3516" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -106,7 +107,7 @@
       <file leaf-file-name="Test.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Test.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="59" column="87" selection-start="2285" selection-end="2285" vertical-scroll-proportion="0.0">
+            <state line="62" column="84" selection-start="2408" selection-end="2408" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -143,9 +144,7 @@
         <entry file="file://$PROJECT_DIR$/src/Performance.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="30" column="13" selection-start="927" selection-end="927" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="method#getMask#0;class#Performance#0" expanded="false" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -215,10 +214,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-4" />
-    <option name="y" value="-4" />
-    <option name="width" value="1608" />
-    <option name="height" value="1164" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1296" />
+    <option name="height" value="1010" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -264,8 +263,8 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -317,9 +316,9 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RunManager" selected="Application.Test">
     <configuration default="false" name="Test" type="Application" factoryName="Application" temporary="true">
@@ -502,7 +501,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-4" y="-4" width="1608" height="1164" extended-state="7" />
+    <frame x="-8" y="-8" width="1296" height="1010" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19953051" sideWeight="0.4667208" order="7" side_tool="false" content_ui="tabs" />
@@ -512,18 +511,18 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41314554" sideWeight="0.44724026" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3286385" sideWeight="0.4970162" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27772325" sideWeight="0.4707792" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2769953" sideWeight="0.4707792" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298122" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14157014" sideWeight="0.4975466" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14100486" sideWeight="0.42488262" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14157014" sideWeight="0.09126595" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.40431795" sideWeight="0.5470779" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22852512" sideWeight="0.80046946" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14100486" sideWeight="0.16431925" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.40258217" sideWeight="0.5470779" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22852512" sideWeight="0.80046946" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298122" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -603,9 +602,29 @@
         <state line="34" column="37" selection-start="987" selection-end="987" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Resource.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="71" column="15" selection-start="2114" selection-end="2114" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/ResourceCopies.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="52" column="30" selection-start="1607" selection-end="1607" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Area.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="50" selection-start="1425" selection-end="1425" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Performance.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="13" selection-start="927" selection-end="927" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Power.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="123" column="94" selection-start="6079" selection-end="6079" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ResourceVersions.java">
@@ -618,50 +637,29 @@
         <state line="47" column="52" selection-start="1783" selection-end="1783" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Performance.java">
+    <entry file="file://$PROJECT_DIR$/src/Test.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="13" selection-start="927" selection-end="927" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="method#getMask#0;class#Performance#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Resource.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="71" column="15" selection-start="2114" selection-end="2114" vertical-scroll-proportion="0.0">
+        <state line="62" column="84" selection-start="2408" selection-end="2408" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/VariantRepository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="131" column="0" selection-start="6451" selection-end="6451" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Power.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="123" column="94" selection-start="6079" selection-end="6079" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Area.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="50" selection-start="1425" selection-end="1425" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="87" selection-start="2285" selection-end="2285" vertical-scroll-proportion="0.0">
+        <state line="72" column="17" selection-start="3516" selection-end="3516" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Objective.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="652" column="116" selection-start="28774" selection-end="28774" vertical-scroll-proportion="0.37258348">
+        <state line="662" column="60" selection-start="29268" selection-end="29268" vertical-scroll-proportion="0.41241685">
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#4187#4197#0" expanded="true" />
+            <element signature="method#increase_border_variant#0;class#Objective#0" expanded="false" />
+            <element signature="method#variantNumberToSignature#0;class#Objective#0" expanded="false" />
+            <element signature="method#check_constraint#0;class#Objective#0" expanded="false" />
           </folding>
         </state>
       </provider>
