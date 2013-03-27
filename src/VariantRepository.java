@@ -20,7 +20,7 @@ public class VariantRepository {
     private int[][] known_variants;
     private double[][] known_variants_values;
     private final String[] objectives; //the list of objectives, the order of objectives corresponds to the order of values in know_variants_values
-    private int last = 0;
+    private int next_empty = 0;  //the position of the last taken slot in both variants and their values arrays
     private final ArrayList<Resource> res_list; //list of resources
     private int growth_value = 10; //the number of new spaces to add to repository when all existing ones are filled;
 
@@ -44,8 +44,10 @@ public class VariantRepository {
         known_variants_values = new double[size][objectvies.length];
         //initialize the values array with NaN - that way later we can tell which values for which objectives were computed
         //and which not
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < size; i++){
+            known_variants[i] = null;
             Arrays.fill(known_variants_values[i], Double.NaN);
+        }
 
     }
 
@@ -75,9 +77,9 @@ public class VariantRepository {
         int[] masked_variant = apply_mask(variant, mask);
         int[] result = {0, 0};
 
-        if (last > 0) {
+        if (next_empty > 0) {
             int i;
-            for (i = 0; i < known_variants.length; i++) {
+            for (i = 0; i < next_empty; i++) {
                 if (compare_variants(masked_variant, known_variants[i]) < 0) { //reached the area of variant larger than current one
                     result[1] = i;
                     System.out.println("I was looking for variant " + Arrays.toString(variant) + "found and result is " + Arrays.toString(result));
@@ -132,7 +134,7 @@ public class VariantRepository {
         if (!Arrays.equals(variant, known_variants[pos])) { //the variant has not been inserted, need to make room to insert it
 
             //check that shifting can be done (to make up room for insertion
-            if (last >= known_variants.length - 1) {//grow the array first
+            if (next_empty == known_variants.length-1) {//grow the array first
                 System.out.println("%%%%%%% Growing");
                 int[][] newArray = new int[known_variants.length + growth_value][];
                 double[][] newValues = new double[known_variants.length + growth_value][objectives.length];
@@ -140,7 +142,7 @@ public class VariantRepository {
                 for (int i = known_variants_values.length; i < newValues.length; i++)
                     Arrays.fill(newValues[i], Double.NaN);
                 //copy into new array
-                for (int i = 0; i < known_variants.length; i++) {
+                for (int i = 0; i < known_variants.length-1; i++) {
                     newArray[i] = Arrays.copyOf(known_variants[i], known_variants[i].length);
                     newValues[i] = Arrays.copyOf(known_variants_values[i], known_variants_values[i].length);
                 }
@@ -149,20 +151,25 @@ public class VariantRepository {
             }
 
 
-            //System.out.println("What is last? " + last + " and position is " + pos);
+            System.out.println("What is next_empty? " + next_empty + " and position is " + pos);
             //shift the variant up to free up the space at pos
-            for (int j = last; j > pos; j--) {
-
+            for (int j = next_empty; j > pos; j--) {
+                //System.out.println(Arrays.toString(known_variants));
+                printRepository();
+                System.out.println("--------------------------");
                 known_variants[j] = Arrays.copyOf(known_variants[j - 1], known_variants[j - 1].length);
                 known_variants_values[j] = Arrays.copyOf(known_variants_values[j - 1], known_variants_values[j - 1].length);
-                /*System.out.println("###########");
+                System.out.println("###########");/*
                 System.out.println(Arrays.toString(known_variants_values[j-1]));
                 System.out.println(Arrays.toString(known_variants_values[j]));
-                System.out.println("############");*/
+                System.out.println("############");                                */
             }
             //empty out the insertion slot
             known_variants[pos]=null;
             known_variants_values [pos][obj_num] = Double.NaN;
+
+            //don't forget to update the last mark
+            next_empty++;
         }
         //the variant has been inserted before (either way before or just above),
         // check if value for specified objective has been computed before
@@ -172,8 +179,7 @@ public class VariantRepository {
             //System.out.println("Insert!");
             known_variants[pos] = Arrays.copyOf(variant, variant.length);
             known_variants_values[pos][obj_num] = value;
-            //don't forget to update the last mark
-            last++;
+
         }
         //else the value for specified objective has been previously computed and saved for the specified variant, do nothing
 
@@ -188,7 +194,7 @@ public class VariantRepository {
 
 
     //pos - must be a non-negative integer less than size known_variants array
-    //This method is inteded to be used after findVariant method
+    //This method is intended to be used after findVariant method
     //Returns: NaN if no value is stored for the specified objective or the value for that objective
     public double getVariantValue(int pos, String objective) {
         System.out.println(">>>> retrieving this value" + known_variants_values[pos][findObjective(objective)]);

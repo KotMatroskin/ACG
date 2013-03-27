@@ -43,6 +43,7 @@ public class Area extends Objective {
         System.out.println ("Evaluating and mask is " + Arrays.toString(mask));
         int[] result = rep.findVariant(variant, mask);
         pos = result[1];
+        System.out.println ("pos is : " + pos);
 
         //now check if this variant has ever been evaluated for some objective and thus inserted in repository
         if (result[0] == 1 && rep.checkObjectiveValue(pos,super.getName())){  //the variant is in repository

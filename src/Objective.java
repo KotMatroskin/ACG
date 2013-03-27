@@ -35,7 +35,7 @@ public abstract class Objective {
     private boolean arranged = false; //if false - means that for this objective the design space has not been partially arranged
     //and when it's true that means that design space is arranged and therefore the order of resources will not change any more
 
-    protected int[] mask = null; //maps the resources' order for this objective to that used in the repository
+    protected int[] mask; //maps the resources' order for this objective to that used in the repository
     //so if mask is applied to a variant in the current objective the resources will be rearranged into the repository's order
 
     protected VariantRepository rep;
@@ -56,8 +56,22 @@ public abstract class Objective {
             throw (new Error("An objective must have a 'min' or 'max' goal"));
         }
         this.res_list = new ArrayList<Resource>(res_list);
+        
+        //for now set up mask to be corresponding to the current order of resources
+        mask = new int[res_list.size()];
+        for (int i = 0; i < res_list.size(); i++){
+            mask[i] = i;
+        }
 
+        //can set the max and min variants
 
+            max_var = new int[res_list.size()];
+            min_var = new int[res_list.size()];
+
+            for (int i = 0; i < min_var.length; i++) {
+                min_var[i] = res_list.get(i).getMin();
+                max_var[i] = res_list.get(i).getMax();
+            }
     }
 
     public Objective(String name, String units, String goal, ArrayList<Resource> res_list, double constraint) {
@@ -108,9 +122,6 @@ public abstract class Objective {
 
     //the max variant that is returned corresponds to the order of resources at the point of calling
     public int[] getMaxVariant() {
-        if (max_var == null) {
-            max_var = new int[res_list.size()];
-        }
         if (!arranged) {
             //make max variant
             for (int i = 0; i < max_var.length; i++) {
@@ -122,10 +133,6 @@ public abstract class Objective {
 
     //the min variant that is returned corresponds to the order of resources at the point of calling
     public int[] getMinVariant() {
-        if (min_var == null) {
-            min_var = new int[res_list.size()];
-
-        }
         if (!arranged) {
             //make min variant
             for (int i = 0; i < min_var.length; i++) {
@@ -502,7 +509,7 @@ public abstract class Objective {
 
     //objectiveList must contain objectives that are connected with the same repository and using the same set of
     //resources
-    //it is assumed that toOptimize objective is in the objectiveList ???
+    //itoOptimize objective can be part objectiveList or not ???
     //Returns: null if no variant that satisfies all objectives' constraints exits or an optimal variant
     //PRecondition: objectives must all be sorted and have their border variants determined by the time of call to this method
     //              objective list must contain at least one objective
@@ -533,19 +540,22 @@ public abstract class Objective {
 
         while (!(toOptimize.getGoal() == -1 && Arrays.equals(opt_variant, toOptimize.getMaxVariant()))) { //|| (toOptimize.getGoal() == +1 && Arrays.equals(opt_variant, toOptimize.getMinVariant())))) {
 
-            System.out.println("in while");
+            //System.out.println("in while");
 
             pass = true;
 
             for (int i = 0; i < objectiveList.length; i++) {   //go through all constrained objectives
+                if (objectiveList[i].equals(toOptimize)) continue;
 
-                System.out.println("going into for");
+                //System.out.println("going into for");
 
                 //take the current optimal variant and try to fit into the allowable area of every objective
                 //allowable means that it is below or above border variant for that objective as applicable
 
                 //mask the optimal variant into the current objective
                 masked_var = toOptimize.convertToAnotherObjective(opt_variant, toOptimize.makeMaskforObjective(repository.getResourceList(), (objectiveList[i]).getMask()));
+                System.out.println ("This variant is "+Arrays.toString(opt_variant) + " value: " + objectiveList[i].evaluate(masked_var));
+
                 //now see if this variant fits semantically into the area bordered by tight_border variant of the objective i
                 if (!objectiveList[i].checkIfSatisfies(masked_var)) {
                     pass = false;
@@ -556,13 +566,14 @@ public abstract class Objective {
             }
             if (pass) break; //so all constraints are satisfied get out of while
             //move to the next variant and start checking objectives all over
+
             opt_variant = toOptimize.getNextVariant(opt_variant, toOptimize.getGoal() * (-1));
             System.out.println("Got next variant : " + Arrays.toString(opt_variant));
 
 
         }
 
-        //so if pass is false that means that while loop above has exhasted all variants of the to be optimized objective
+        //so if pass is false that means that while loop above has exhausted all variants of the to be optimized objective
         if (pass)
             return opt_variant;
         else return null;
@@ -581,7 +592,7 @@ public abstract class Objective {
         int i;
         if (left_right < 0) { //move to the left in the tree
             if (Arrays.equals(this_variant, min_var)) {
-                System.out.println("equal min var");
+                //System.out.println("equal min var");
                 return null; //already at the very left of the tree, nowhere to go
             }
             for (i = this_variant.length - 1; i >= 0; i--) {
@@ -590,7 +601,7 @@ public abstract class Objective {
                     System.out.println("here");
                     break;
                 }
-                System.out.println("set max");
+                //System.out.println("set max");
                 next_variant[i] = res_list.get(i).getMax();
                 //the resource on current level already has the smallest possible value, so set to max and go to the level up
             }
@@ -633,6 +644,12 @@ public abstract class Objective {
         return output;
     }
 
+
+    /*
+    writes a .tgf file specified by path, or if path is null, to default location
+    the file represents the entire objective tree with actual values for all variants
+    that have been computed so far or just number of the variant for those that were not computed
+     */
     public void toYGraph(String path) {
         try {
             BufferedWriter out;
@@ -659,13 +676,20 @@ public abstract class Objective {
                     } else {
                         variant = variantNumberToSignature(j+1);
                         result = rep.findVariant(variant,mask);
+
+
                         if (result[0] == 0)
                             //out.write((prev_num + j) + " " + (j+1) + "\n");
-                            out.write((prev_num + j) + " .");
-                        else {
-
+                            out.write((prev_num + j) + " .\n");
+                        else {//so it has been evaluated before for *some objective*)
+                            //now check if it was evaluated for this objective
+                            double value = rep.getVariantValue(result[1], name);
+                            if (!Double.isNaN(value) )
                             out.write((prev_num + j) + " " +rep.getVariantValue(result[1], name) + "\n");
+                            else
+                                out.write((prev_num + j) + " .\n");
                         }
+
                     }
                 }
                 num_nodes_pres_level = num_nodes_pres_level * res_list.get(i).getMaxNumBranches();

@@ -103,7 +103,7 @@ public abstract class Resource {
     public String toString (){
         String s = "Resource " + name + ", "+num + " versions/copies exist. ";
         if (not_included)
-            s = s+ " This resource maybe omitted. ";
+            s = s+ " This resource maybe omitted. \n";
         else
             s+= "At least 1 of this resource is always included. \n";
         return s;
