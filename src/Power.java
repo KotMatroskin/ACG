@@ -79,7 +79,7 @@ public class Power extends Objective {
         if (result[0] == 1 && rep.checkObjectiveValue(pos, super.getName())) {  //the variant is in repository
 
             //variant already has been computed before and value filed
-            System.out.println("Found variant " + Arrays.toString(variant) + " at position " + pos);
+            System.out.println("Found variant " + Arrays.toString(variant) + " at position " + pos+ "for " + super.getName());
             return rep.getVariantValue(pos, super.getName());
 
         } else { //either the variant was not computed before at all or was not computed for power objective,
@@ -90,7 +90,7 @@ public class Power extends Objective {
             // it is done every time until the space is fully arranged
             if (super.getArranged() == false || (super.getArranged() && clck_pos == -1)) {
                 clck_pos = super.getResourceList().indexOf(clck);
-                System.out.println("the clock is right now at " + pos);
+                //System.out.println("the clock is right now at " + pos);
             }
             //get the power/area value
             Double power = (super.getResourceList()).get(clck_pos).getValue("Power", variant[clck_pos]);
@@ -104,11 +104,11 @@ public class Power extends Objective {
             } else { //area is an objective in this system so call evaluate method (it will/should take care of all the
                 //details of checking repository and inserting the value if needed
                 int[] tmp_mask = super.makeMaskforObjective(rep.getResourceList(), areaObjective.getMask());
-                System.out.println("Mask that converts power to area is " + Arrays.toString(tmp_mask));
+                //System.out.println("Mask that converts power to area is " + Arrays.toString(tmp_mask));
 
 
-                System.out.println("Masked variant is" + Arrays.toString(convertToAnotherObjective(variant, tmp_mask)));
-                System.out.println("Area is : " + areaObjective.evaluate(super.convertToAnotherObjective(variant, tmp_mask)));
+                //System.out.println("Masked variant is" + Arrays.toString(convertToAnotherObjective(variant, tmp_mask)));
+                //System.out.println("Area is : " + areaObjective.evaluate(super.convertToAnotherObjective(variant, tmp_mask)));
                 power = power * areaObjective.evaluate(super.convertToAnotherObjective(variant, tmp_mask));
 
             }
@@ -135,6 +135,7 @@ public class Power extends Objective {
         if (resources.size() != variant.length) {
             throw (new Error("the variant of resources must have the same length as number of *types* of resources available"));
         }
+
 
         Double area = 0.0;
 

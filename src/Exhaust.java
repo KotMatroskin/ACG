@@ -45,7 +45,7 @@ public class Exhaust {
         res_list.add(clock);
 
         VariantRepository repository = new VariantRepository(res_list, obj);
-        repository.printRepository();
+        //repository.printRepository();
 
         Objective[] objectives = new Objective[2];
         objectives[0] = new Area("units", "max",res_list, repository, 50);
@@ -62,10 +62,7 @@ public class Exhaust {
         }
 
         repository.printRepository();
-        //Objective area =
-        //Objective[] objectives = new Objective[4];
 
-        //VariantRepository rep = new VariantRepository(res_list, objectives);
 
     }
 

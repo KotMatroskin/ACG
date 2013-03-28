@@ -37,13 +37,13 @@ public class Area extends Objective {
     //presently stored in the list of resources
     public double evaluate(int[] variant) {
 
-        System.out.println("Calling area evaluate with variant " + Arrays.toString(variant));
+        //System.out.println("Calling area evaluate with variant " + Arrays.toString(variant));
         //first check if this variant hasn't been evaluated already
         int pos;
-        System.out.println ("Evaluating and mask is " + Arrays.toString(mask));
+        //System.out.println ("Evaluating and mask is " + Arrays.toString(mask));
         int[] result = rep.findVariant(variant, mask);
         pos = result[1];
-        System.out.println ("pos is : " + pos);
+        //System.out.println ("pos is : " + pos);
 
         //now check if this variant has ever been evaluated for some objective and thus inserted in repository
         if (result[0] == 1 && rep.checkObjectiveValue(pos,super.getName())){  //the variant is in repository

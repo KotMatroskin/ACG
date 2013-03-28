@@ -198,8 +198,8 @@ public abstract class Objective {
         for (int i = 0; i < other_objective_mask.length; i++) {
             unmask[other_objective_mask[i]] = i;
         }
-        System.out.println("Other objective mask is :" + Arrays.toString(other_objective_mask));
-        System.out.println("unmask is :" + Arrays.toString(unmask));
+        //System.out.println("Other objective mask is :" + Arrays.toString(other_objective_mask));
+        //System.out.println("unmask is :" + Arrays.toString(unmask));
 
 
         /*applying unmask on current mask will do the trick*/
@@ -223,7 +223,7 @@ public abstract class Objective {
                     }
                 }
             }
-            System.out.println("Created a temporary mask for unsorted space :" + Arrays.toString(tmp_mask));
+            //System.out.println("Created a temporary mask for unsorted space :" + Arrays.toString(tmp_mask));
 
             //now apply first the current mask followed by the unmask
             for (int i = 0; i < tmp_mask.length; i++) {
@@ -236,14 +236,14 @@ public abstract class Objective {
 
     //converts a variant from current objective "view" to that of the other objective (given that objective's mask)
     public int[] convertToAnotherObjective(int[] variant, int[] other_objective_mask) {
-        System.out.println("-->Trying to mask variant :" + Arrays.toString(variant));
-        System.out.println("-->with mask :" + Arrays.toString(other_objective_mask));
+        //System.out.println("-->Trying to mask variant :" + Arrays.toString(variant));
+        //System.out.println("-->with mask :" + Arrays.toString(other_objective_mask));
         int[] masked_variant = new int[variant.length];
         for (int i = 0; i < variant.length; i++) {
             masked_variant[i] = variant[other_objective_mask[i]];
 
         }
-        System.out.println("-->Finishing masking, got: " + Arrays.toString(masked_variant));
+        //System.out.println("-->Finishing masking, got: " + Arrays.toString(masked_variant));
         return masked_variant;
     }
 
@@ -468,7 +468,7 @@ public abstract class Objective {
                     }
 
                     System.out.println("--------------------------");
-                    rep.printRepository();
+                    //rep.printRepository();
                     System.out.println("--------------------------");
 
 

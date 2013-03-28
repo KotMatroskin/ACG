@@ -82,13 +82,13 @@ public class VariantRepository {
             for (i = 0; i < next_empty; i++) {
                 if (compare_variants(masked_variant, known_variants[i]) < 0) { //reached the area of variant larger than current one
                     result[1] = i;
-                    System.out.println("I was looking for variant " + Arrays.toString(variant) + "found and result is " + Arrays.toString(result));
+                    //System.out.println("I was looking for variant " + Arrays.toString(variant) + "found and result is " + Arrays.toString(result));
                     return result;
                 }
                 if (compare_variants(masked_variant, known_variants[i]) == 0) {   //found variant and check that the value for given objective was computed
                     result[0] = 1;
                     result[1] = i;
-                    System.out.println("I was looking for variant " + Arrays.toString(variant) + "found and result is " + Arrays.toString(result));
+                    //System.out.println("I was looking for variant " + Arrays.toString(variant) + "found and result is " + Arrays.toString(result));
                     return result;
                 }
 
@@ -98,7 +98,7 @@ public class VariantRepository {
             return result;
 
         }
-        //System.out.println("I was looking for variant " + Arrays.toString(variant) + "found and result is " + Arrays.toString(result));
+        System.out.println("I was looking for variant " + Arrays.toString(variant) + "found and result is " + Arrays.toString(result));
         //repository is empty (last is pointing to 0) so return result array with initial values
         return result;
 
@@ -144,7 +144,7 @@ public class VariantRepository {
                 //copy into new array
                 for (int i = 0; i < known_variants.length-1; i++) {
                     newArray[i] = Arrays.copyOf(known_variants[i], known_variants[i].length);
-                    newValues[i] = Arrays.copyOf(known_variants_values[i], known_variants_values[i].length);
+                    newValues[i] = Arrays.copyOf(known_variants_values[i], objectives.length);//known_variants_values[i].length);
                 }
                 known_variants = newArray;
                 known_variants_values = newValues;
@@ -152,21 +152,21 @@ public class VariantRepository {
 
 
             System.out.println("What is next_empty? " + next_empty + " and position is " + pos);
-            //shift the variant up to free up the space at pos
+            //shift the variants up to free up the space at pos
             for (int j = next_empty; j > pos; j--) {
                 //System.out.println(Arrays.toString(known_variants));
-                printRepository();
-                System.out.println("--------------------------");
+                //printRepository();
+                //System.out.println("--------------------------");
                 known_variants[j] = Arrays.copyOf(known_variants[j - 1], known_variants[j - 1].length);
                 known_variants_values[j] = Arrays.copyOf(known_variants_values[j - 1], known_variants_values[j - 1].length);
-                System.out.println("###########");/*
+                System.out.println("###########");
                 System.out.println(Arrays.toString(known_variants_values[j-1]));
                 System.out.println(Arrays.toString(known_variants_values[j]));
-                System.out.println("############");                                */
+                System.out.println("############");
             }
             //empty out the insertion slot
             known_variants[pos]=null;
-            known_variants_values [pos][obj_num] = Double.NaN;
+            Arrays.fill (known_variants_values [pos],Double.NaN);
 
             //don't forget to update the last mark
             next_empty++;
@@ -176,7 +176,7 @@ public class VariantRepository {
 
         if (!checkObjectiveValue(pos, objective)) {  //wasn't computed and inserted before
             //proceed with insertion, either slot at pos is empty or it wasn't and space was prepared above
-            //System.out.println("Insert!");
+            System.out.println("Insert!");
             known_variants[pos] = Arrays.copyOf(variant, variant.length);
             known_variants_values[pos][obj_num] = value;
 
@@ -184,10 +184,10 @@ public class VariantRepository {
         //else the value for specified objective has been previously computed and saved for the specified variant, do nothing
 
 
-        for (int n = 0; n < known_variants_values.length; n++) {
+        /*for (int n = 0; n < known_variants_values.length; n++) {
             System.out.print(Arrays.toString(known_variants[n]));
             System.out.print(Arrays.toString(known_variants_values[n]) + "\n");
-        }
+        } */
 
 
     }
@@ -197,7 +197,7 @@ public class VariantRepository {
     //This method is intended to be used after findVariant method
     //Returns: NaN if no value is stored for the specified objective or the value for that objective
     public double getVariantValue(int pos, String objective) {
-        System.out.println(">>>> retrieving this value" + known_variants_values[pos][findObjective(objective)]);
+        //System.out.println(">>>> retrieving this value" + known_variants_values[pos][findObjective(objective)]);
         return known_variants_values[pos][findObjective(objective)];
     }
 
